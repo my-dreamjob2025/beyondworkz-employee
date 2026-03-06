@@ -57,24 +57,23 @@ const WhyChooseUsSection = () => {
           {reasons.map((reason) => (
             <div
               key={reason.title}
-              className="bg-white border border-[#E2E8F0] rounded-2xl p-7 shadow-sm hover:shadow-md transition"
+              className="w-[290px] h-[236px] bg-white border border-[#E2E8F0] rounded-[16px] p-6 flex flex-col justify-start transition hover:shadow-md"
             >
               {/* Icon */}
-              <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-[#3B82F6] to-[#2563EB] shadow-md">
+              <div className="w-[56px] h-[56px] rounded-[16px] flex items-center justify-center shadow-[0px_8px_16px_0px_#2563EB33] bg-[#2563EB]">
                 <img
                   src={reason.icon}
                   alt={reason.title}
-                  className="w-6 h-6 object-contain"
+                  className="w-[56px] h-[56px] object-contain mt-2"
                 />
               </div>
-
               {/* Title */}
-              <h3 className="mt-6 text-base font-semibold text-[#0F172A]">
+              <h3 className="w-[178.3px] h-[27px] mt-[24px] font-['Inter'] font-semibold text-[18px] leading-[27px] tracking-[0px] text-[#0F172A]">
                 {reason.title}
               </h3>
 
               {/* Description */}
-              <p className="mt-3 text-sm text-[#94A3B8] leading-relaxed">
+              <p className="w-[239px] h-[68px] mt-[12px] font-['Inter'] font-normal text-[14px] leading-[22.4px] tracking-[0px] text-[#94A3B8]">
                 {reason.description}
               </p>
             </div>

@@ -1,4 +1,5 @@
 import logoMark from "../../assets/icons/arrow.svg";
+import FooterLogo from "../../assets/logos/footerlogo.svg"
 
 const seekerLinks = [
   "Browse Jobs",
@@ -27,21 +28,30 @@ const Footer = () => {
     >
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid gap-10 md:grid-cols-4">
-          <div className="space-y-4">
+          <div className="flex flex-col w-[409px] h-[180px] gap-[22.89px]">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500 text-sm font-semibold text-white">
-                BW
+              <div className="flex h-8 w-8 items-center justify-center">
+                <img
+                  src={FooterLogo}
+                  alt="Beyond Workz Logo"
+                  className="w-[20px] h-[18px]"
+                />
               </div>
-              <span className="text-base font-semibold text-white">
+
+              <span
+                className="w-[161px] h-[30px] text-[20px] leading-[30px] font-extrabold text-white"
+                style={{ fontFamily: "Inter" }}
+              >
                 Beyond Workz
               </span>
             </div>
+
             <p
-              className="max-w-xs text-sm leading-relaxed"
-              style={{ color: "#A4A4A4" }}
+              className="w-[302px] h-[68px] text-[14px] leading-[22.4px] font-normal flex items-center"
+              style={{ color: "#A4A4A4", fontFamily: "Inter" }}
             >
               Connecting great talent with great opportunities across
-              industries—from office roles to on‑site operations.
+              industries—from office roles to on-site operations.
             </p>
           </div>
 

@@ -23,7 +23,7 @@ const CoolPlacesSection = () => {
       className="w-full flex justify-center"
       style={{
         background:
-          "linear-gradient(0deg, #F1F5F9 0%, #2563EB 50%, #F0F4F8 100%)",
+          "linear-gradient(0deg, #F1F5F9 0%, #2563EB 50%, #F0F4F9 100%)",
       }}
     >
       <div className="w-[1440px] px-6 pt-20 flex flex-col">
