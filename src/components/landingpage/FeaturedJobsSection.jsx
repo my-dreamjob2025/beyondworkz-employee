@@ -49,68 +49,75 @@ const FeaturedJobsSection = () => {
   const progressWidth = ((current + 1) / totalSlides) * 100;
 
   return (
-    <section className="w-full bg-white">
-      <div className="mx-auto max-w-7xl px-4 pb-12 pt-6 sm:px-6 lg:px-8 lg:pb-16">
+    <section className="w-full bg-[#F1F5F9] py-20">
+      <div className="mx-auto max-w-7xl px-6">
         {/* Header */}
-        <header className="mx-auto max-w-3xl text-center">
-          <h2 className="text-2xl font-semibold text-slate-900 sm:text-3xl">
+        <div className="max-w-xl mx-auto text-center">
+          <h2 className="text-2xl font-semibold text-[#0F172A]">
             Featured Jobs
           </h2>
-          <p className="mt-3 text-sm text-slate-600 sm:text-base">
+
+          <p className="mt-3 text-sm text-[#94A3B8]">
             Discover hand-picked opportunities from top companies actively
             hiring right now.
           </p>
-        </header>
+        </div>
 
-        {/* Slider Wrapper */}
+        {/* Slider */}
         <div className="relative mt-10 overflow-hidden">
           <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${current * 100}%)` }}
           >
             {jobs.map((job, index) => (
-              <div key={index} className="w-full md:w-1/3 flex-shrink-0 px-3">
-                <article className="flex h-full flex-col justify-between rounded-2xl bg-white p-6 shadow-sm shadow-slate-200 transition hover:shadow-md">
-                  <div className="space-y-4">
+              <div
+                key={index}
+                className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3"
+              >
+                <article className="flex flex-col justify-between h-full rounded-xl bg-white p-5 border border-[#E2E8F0] shadow-sm hover:shadow-md transition">
+                  {/* Top */}
+                  <div className="space-y-3">
                     {/* Logo + Title */}
-                    <div className="flex items-start gap-4">
-                      <div className="flex h-[50px] w-[50px] items-center justify-center rounded-lg border border-slate-200 bg-white">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-[46px] w-[46px] items-center justify-center bg-white">
                         <img
                           src={job.logo}
                           alt={job.company}
-                          className="h-8 w-8 object-contain"
+                          className="h-7 w-7"
                         />
                       </div>
 
                       <div>
-                        <h3 className="text-sm font-semibold text-slate-900 sm:text-base">
+                        <h5 className="text-sm font-semibold text-[#0F172A]">
                           {job.title}
-                        </h3>
-                        <p className="mt-1 text-xs font-medium text-slate-500 sm:text-sm">
+                        </h5>
+
+                        <p className="mt-1 text-xs text-[#94A3B8]">
                           {job.company}
                         </p>
                       </div>
                     </div>
 
                     {/* Job Details */}
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#64748B]">
                       <span>{job.location}</span>
 
-                      <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 font-medium text-blue-700">
+                      <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-[#2563EB]">
                         {job.type}
                       </span>
 
-                      <span className="inline-flex items-center rounded-full bg-orange-500/10 px-2.5 py-1 font-semibold text-orange-500">
+                      <span className="inline-flex items-center rounded-full bg-[#F97316] px-2.5 py-1 text-[11px] font-semibold text-white">
                         {job.salary}
                       </span>
                     </div>
                   </div>
 
-                  {/* Bottom Section */}
-                  <div className="mt-6 flex items-center justify-between">
-                    <p className="text-xs text-slate-400">{job.posted}</p>
+                  <hr className="border-t border-[#94A3B8] mt-15" />
+                  {/* Bottom */}
+                  <div className="mt-5 flex items-center justify-between">
+                    <p className="text-[11px] text-[#94A3B8]">{job.posted}</p>
 
-                    <button className="rounded-full bg-blue-600 px-5 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 sm:text-sm">
+                    <button className="rounded-full bg-[#2563EB] px-4 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 transition">
                       Apply Now
                     </button>
                   </div>
@@ -120,31 +127,28 @@ const FeaturedJobsSection = () => {
           </div>
         </div>
 
-        {/* Custom Slide Bar - LEFT SIDE */}
-        <div className="mt-10 flex justify-start">
-          <div className="flex items-center gap-4 rounded-full bg-white px-6 py-3 shadow-sm border border-slate-200">
-            {/* Left Arrow */}
+        {/* Slider Controls */}
+        <div className="mt-8 flex justify-start">
+          <div className="flex items-center gap-4 rounded-full bg-white px-5 py-2 border border-[#E2E8F0] shadow-sm">
             <button
               onClick={prev}
               disabled={current === 0}
-              className="text-slate-500 text-lg disabled:opacity-30"
+              className="text-[#64748B] text-lg disabled:opacity-30"
             >
               &#8249;
             </button>
 
-            {/* Progress Bar */}
-            <div className="w-32 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+            <div className="w-28 h-1.5 bg-[#E2E8F0] rounded-full overflow-hidden">
               <div
-                className="h-full bg-blue-600 transition-all duration-300 rounded-full"
+                className="h-full bg-[#2563EB] transition-all duration-300"
                 style={{ width: `${progressWidth}%` }}
               />
             </div>
 
-            {/* Right Arrow */}
             <button
               onClick={next}
               disabled={current === totalSlides - 1}
-              className="text-slate-500 text-lg disabled:opacity-30"
+              className="text-[#64748B] text-lg disabled:opacity-30"
             >
               &#8250;
             </button>

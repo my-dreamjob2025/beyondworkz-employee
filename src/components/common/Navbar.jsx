@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import arrowIcon from "../../assets/icons/arrow.svg";
-import logo from "../../assets/logos/logo.svg";
 
 const NAV_LINKS = [
   { label: "Find Jobs", href: "/jobs" },
@@ -12,120 +11,148 @@ const NAV_LINKS = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleCloseMenu = () => {
-    setIsOpen(false);
-  };
-
   return (
-    <nav className="sticky top-0 z-20 border-b border-slate-200 bg-white backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <nav
+      className="sticky top-0 z-50 border-b"
+      style={{
+        borderColor: "var(--color-neutral-200)",
+        backgroundColor: "var(--color-neutral-50)",
+      }}
+    >
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500 text-sm font-semibold text-white">
-            BW
+          <div
+            className="flex h-8 w-8 items-center justify-center rounded-md text-white"
+            style={{ backgroundColor: "var(--color-primary-600)" }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M3 7h18M3 12h18M3 17h18"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
-          <span className="text-lg font-semibold text-slate-900">
+
+          <span
+            className="text-lg font-semibold"
+            style={{ color: "var(--color-primary-600)" }}
+          >
             Beyond Workz
           </span>
         </Link>
-        <ul className="flex items-center gap-8 text-sm font-medium text-slate-600">
+
+        {/* Desktop Menu */}
+        <ul
+          className="hidden items-center gap-8 text-sm font-medium md:flex"
+          style={{ color: "var(--color-neutral-600)" }}
+        >
           {NAV_LINKS.map((link) => (
             <li key={link.label}>
-              <Link
-                to={link.href}
-                className="transition-colors hover:text-slate-900"
-              >
+              <Link to={link.href} className="transition hover:text-black">
                 {link.label}
               </Link>
             </li>
           ))}
         </ul>
 
-        <div className="hidden items-center gap-10 md:flex">
-          <div className="flex items-center gap-4">
-            <Link
-              to="/register"
-              className="rounded-full bg-orange-500 px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-600 inline-block"
-            >
-              Register
-            </Link>
-            <Link
-              to="/login"
-              className="rounded-full border border-orange-500 bg-white px-6 py-2 text-sm font-semibold text-orange-500 transition hover:bg-orange-50 inline-block"
-            >
-              Login
-            </Link>
-            <div className="h-6 w-px bg-slate-200" />
-            <button className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
-              For Recruiters
-              <img src={arrowIcon} alt="" className="h-4 w-4" />
-            </button>
-          </div>
+        {/* Desktop Buttons */}
+        <div className="hidden items-center gap-4 md:flex">
+          {/* Register */}
+          <Link
+            to="/register"
+            className="rounded-md px-5 py-2 text-sm font-semibold"
+            style={{
+              backgroundColor: "var(--color-accent-500)",
+              color: "#ffffff",
+            }}
+          >
+            Register
+          </Link>
+
+          {/* Login */}
+          <Link
+            to="/login"
+            className="rounded-md px-5 py-2 text-sm font-semibold"
+            style={{
+              color: "var(--color-accent-500)",
+              border: "1px solid var(--color-accent-500)",
+              backgroundColor: "#fff7ed",
+            }}
+          >
+            Login
+          </Link>
+
+          {/* Divider */}
+          <div
+            className="h-6 w-px"
+            style={{ backgroundColor: "var(--color-neutral-200)" }}
+          />
+
+          {/* Recruiters */}
+          <button className="inline-flex items-center gap-2 rounded-full border border-[#E8E8E6] bg-[#F1F1F1] px-5 py-2 text-sm font-medium text-[#475569] transition hover:bg-[#E8E8E6]">
+            For Recruiters
+            <img src={arrowIcon} alt="" className="h-4 w-4" />
+          </button>
         </div>
 
-        <button
-          type="button"
-          className="inline-flex items-center justify-center rounded-md p-2 text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500 md:hidden"
-          onClick={() => setIsOpen((open) => !open)}
-          aria-label="Toggle navigation"
-          aria-expanded={isOpen}
-        >
-          <span className="sr-only">Open main menu</span>
+        {/* Mobile Toggle */}
+        <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
           <div className="space-y-1.5">
-            <span
-              className={`block h-0.5 w-5 bg-slate-900 transition-transform ${
-                isOpen ? "translate-y-1.5 rotate-45" : ""
-              }`}
-            />
-            <span
-              className={`block h-0.5 w-5 bg-slate-900 transition-opacity ${
-                isOpen ? "opacity-0" : "opacity-100"
-              }`}
-            />
-            <span
-              className={`block h-0.5 w-5 bg-slate-900 transition-transform ${
-                isOpen ? "-translate-y-1.5 -rotate-45" : ""
-              }`}
-            />
+            <span className="block h-0.5 w-6 bg-slate-800"></span>
+            <span className="block h-0.5 w-6 bg-slate-800"></span>
+            <span className="block h-0.5 w-6 bg-slate-800"></span>
           </div>
         </button>
       </div>
 
+      {/* Mobile Menu */}
       {isOpen && (
-        <div className="border-t border-slate-200 bg-white pb-6 pt-4 md:hidden">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <ul className="space-y-4 text-sm font-medium text-slate-700">
-              {NAV_LINKS.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    to={link.href}
-                    className="block"
-                    onClick={handleCloseMenu}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+        <div
+          className="border-t md:hidden"
+          style={{ borderColor: "var(--color-neutral-200)" }}
+        >
+          <div className="space-y-4 px-6 py-5">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.label}
+                to={link.href}
+                className="block text-sm font-medium"
+                style={{ color: "var(--color-neutral-600)" }}
+              >
+                {link.label}
+              </Link>
+            ))}
 
-            <div className="mt-6 space-y-3">
+            <div className="pt-4 space-y-3">
+              {/* Register */}
               <Link
                 to="/register"
-                className="w-full rounded-full bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-600 block text-center"
-                onClick={handleCloseMenu}
+                className="block w-full rounded-md py-2 text-center text-sm font-semibold"
+                style={{
+                  backgroundColor: "var(--color-accent-500)",
+                  color: "#ffffff",
+                }}
               >
                 Register
               </Link>
+
+              {/* Login */}
               <Link
                 to="/login"
-                className="w-full rounded-full border border-orange-500 bg-white px-4 py-2 text-sm font-semibold text-orange-500 transition hover:bg-orange-50 block text-center"
-                onClick={handleCloseMenu}
+                className="block w-full rounded-md py-2 text-center text-sm font-semibold"
+                style={{
+                  color: "var(--color-accent-500)",
+                  border: "1px solid var(--color-accent-500)",
+                }}
               >
                 Login
               </Link>
-              <button
-                className="flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-                onClick={handleCloseMenu}
-              >
+
+              {/* Recruiters */}
+              <button className="inline-flex items-center gap-2 rounded-full border border-[#E8E8E6] bg-[#F1F1F1] px-5 py-2 text-sm font-medium text-[#475569] transition hover:bg-[#E8E8E6]">
                 For Recruiters
                 <img src={arrowIcon} alt="" className="h-4 w-4" />
               </button>

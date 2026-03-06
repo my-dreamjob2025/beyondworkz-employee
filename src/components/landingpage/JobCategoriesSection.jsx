@@ -12,45 +12,44 @@ const categories = [
 
 const JobCategoriesSection = () => {
   return (
-    <section className="w-full bg-white">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <section className="w-full bg-[#F1F5F9] py-20">
+      <div className="mx-auto max-w-7xl px-6">
         {/* Header */}
-        <header className="mx-auto max-w-3xl text-center">
-          <h2 className="mt-2 text-2xl font-semibold text-slate-900 sm:text-3xl">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl font-semibold text-[#0F172A]">
             Browse by Category
           </h2>
-          <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            From corporate offices to shop floors and field operations, Beyond
-            Workz connects you to opportunities that match your skills.
-          </p>
-        </header>
 
-        {/* Categories Grid */}
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
+          <p className="mt-5 text-base text-[#94A3B8]">
+            Explore thousands of job opportunities in various sectors, tailored
+            to both white-collar and blue-collar professionals.
+          </p>
+        </div>
+
+        {/* Grid */}
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {categories.map((category) => (
-            <article
+            <div
               key={category.label}
-              className="w-[286px] h-[211px] rounded-[16px] border border-slate-200 bg-white pt-8 pr-6 pb-8 pl-6 flex flex-col items-center justify-center text-center gap-4 shadow-sm"
+              className="flex flex-col items-center text-center bg-white border border-[#E2E8F0] rounded-[16px] h-[210px] px-6 py-8 shadow-sm hover:shadow-md transition"
             >
               {/* Icon */}
-              <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              <div className="flex items-center justify-center w-14 h-14 mb-4 rounded-md bg-[rgba(37,99,235,0.08)]">
                 <img
                   src={category.icon}
                   alt={category.label}
-                  className="h-6 w-6 object-contain"
+                  className="w-5 h-5 object-contain"
                 />
               </div>
 
-              {/* Text */}
-              <div>
-                <h3 className="text-sm font-semibold text-slate-900 sm:text-base">
-                  {category.label}
-                </h3>
-                <p className="mt-1 text-xs font-medium text-slate-500 sm:text-sm">
-                  {category.jobs}
-                </p>
-              </div>
-            </article>
+              {/* Title */}
+              <h5 className="text-xl font-semibold text-[#0F172A] mt-2">
+                {category.label}
+              </h5>
+
+              {/* Jobs */}
+              <p className="mt-3 text-sm text-[#64748B]">{category.jobs}</p>
+            </div>
           ))}
         </div>
       </div>
