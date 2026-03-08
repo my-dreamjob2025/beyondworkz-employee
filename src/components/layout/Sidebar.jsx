@@ -18,13 +18,13 @@ const Sidebar = () => {
     { label: "My Profile", icon: profileIcon, path: "/profile" },
     { label: "Applications", icon: applicationsIcon, path: "/applications" },
     { label: "Saved Jobs", icon: savedIcon, path: "/saved-jobs" },
-    { label: "Interviews", icon: interviewIcon, path: "/" },
-    { label: "Messages", icon: messageIcon, path: "/" },
+    { label: "Interviews", icon: interviewIcon, path: "/interviews" },
+    { label: "Messages", icon: messageIcon, path: "/messages" },
   ];
 
   const preferenceItems = [
     { label: "Job Alerts", icon: alertIcon, path: "/job-alerts" },
-    { label: "Settings", icon: settingsIcon, path: "/" },
+    { label: "Settings", icon: settingsIcon, path: "/setting" },
   ];
 
   const isActive = (path) => location.pathname === path;

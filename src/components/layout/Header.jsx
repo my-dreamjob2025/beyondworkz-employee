@@ -1,11 +1,17 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../services/authService";
+
 import notification from "../../assets/layout/icons/Notification.svg";
 import downarrow from "../../assets/layout/icons/down-arrow.svg";
+
+import NotificationDropdown from "./NotificationDropdown";
 
 const Header = () => {
   const navigate = useNavigate();
   const currentUser = authService.getCurrentUser();
+
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const handleLogout = () => {
     authService.logout();
@@ -52,20 +58,29 @@ const Header = () => {
         {/* RIGHT */}
         <div className="flex items-center gap-5">
           {/* Notification */}
-          <div className="relative cursor-pointer">
-            <img
-              src={notification}
-              alt="notification icon"
-              className="w-5 h-5"
-            />
-            <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+          <div className="relative">
+            <button
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative"
+            >
+              <img src={notification} alt="notification" className="w-5 h-5" />
+
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+
+            {showNotifications && <NotificationDropdown />}
           </div>
 
           {/* Divider */}
           <div className="h-6 w-px bg-slate-200"></div>
 
           {/* Profile */}
-          <div className="flex items-center gap-3">
+          <div
+            className="flex items-center gap-3 cursor-pointer"
+            onClick={() => {
+              navigate("/profile");
+            }}
+          >
             <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
               {currentUser?.firstName?.[0]}
             </div>
@@ -74,13 +89,11 @@ const Header = () => {
               <p className="text-sm font-medium text-slate-800">
                 {currentUser?.firstName} {currentUser?.lastName}
               </p>
+
               <p className="text-xs text-slate-500">Frontend Developer</p>
             </div>
-            <img
-              src={downarrow}
-              alt="down arrow icon"
-              className="w-3 h-3 cursor-pointer"
-            />
+
+            <img src={downarrow} alt="down arrow" className="w-3 h-3" />
           </div>
         </div>
       </div>

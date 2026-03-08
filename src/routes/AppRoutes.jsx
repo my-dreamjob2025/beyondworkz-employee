@@ -10,6 +10,10 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import Applications from "../pages/dashboard/Applications";
 import JobSaved from "../pages/dashboard/SavedJobs";
 import JobAlerts from "../pages/dashboard/JobAlerts";
+import Interviews from "../pages/dashboard/Interviews";
+import Messages from "../pages/dashboard/Messages";
+import Settings from "../pages/dashboard/Setting";
+import PageNotFound from "../pages/common/PageNotFound";
 
 const AppRoutes = () => {
   return (
@@ -28,6 +32,10 @@ const AppRoutes = () => {
           <Route path="/applications" element={<Applications />} />
           <Route path="/saved-jobs" element={<JobSaved />} />
           <Route path="/job-alerts" element={<JobAlerts />} />
+          <Route path="/interviews" element={<Interviews />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/setting" element={<Settings />} />
+          <Route path="*" element={<PageNotFound />} />
         </Route>
       </Routes>
     </Router>
