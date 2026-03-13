@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import logo from "../../assets/logos/beyondworkzlogo.png";
 import arrowIcon from "../../assets/icons/landing-page/arrow.svg";
 
 const NAV_LINKS = [
@@ -22,19 +23,7 @@ const Navbar = () => {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <div
-            className="flex h-8 w-8 items-center justify-center rounded-md text-white"
-            style={{ backgroundColor: "var(--color-primary-600)" }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M3 7h18M3 12h18M3 17h18"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </div>
+          <img src={logo} alt="Beyond Workz" className="h-9 w-auto object-contain" />
 
           <span
             className="text-lg font-semibold"

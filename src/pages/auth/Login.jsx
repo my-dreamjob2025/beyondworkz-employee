@@ -1,14 +1,22 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { authService } from "../../services/authService";
+import useAuth from "../../hooks/useAuth";
+import logo from "../../assets/logos/beyondworkzlogo.png";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+
+  const from = location.state?.from?.pathname || "/dashboard";
+
   const [step, setStep] = useState("email");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   const handleSendOTP = async (e) => {
     e.preventDefault();
@@ -16,10 +24,13 @@ const Login = () => {
     setError("");
 
     try {
-      await authService.sendOTP(email);
+      await authService.sendLoginOtp(email);
       setStep("otp");
+      startResendCooldown(30);
     } catch (err) {
-      setError(err.message || "Failed to send OTP. Please try again.");
+      const msg =
+        err.response?.data?.message || "Failed to send OTP. Please try again.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -38,15 +49,48 @@ const Login = () => {
     }
 
     try {
-      await authService.verifyOTP(email, otpString);
-      // After OTP verification, log in the user
-      await authService.loginUser(email);
-      navigate("/dashboard");
+      const data = await authService.verifyEmployeeOtp(email, otpString);
+      login(data.accessToken, data.user);
+      // Redirect to profile completion if profile is significantly incomplete
+      const isIncomplete =
+        !data.user?.profileCompletion || data.user.profileCompletion < 40;
+      const destination = isIncomplete ? "/complete-profile" : from;
+      navigate(destination, { replace: true });
     } catch (err) {
-      setError(err.message || "OTP verification failed. Please try again.");
+      const msg =
+        err.response?.data?.message ||
+        "OTP verification failed. Please try again.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleResendOTP = async () => {
+    if (resendCooldown > 0) return;
+    setError("");
+    try {
+      await authService.resendOtp(email);
+      startResendCooldown(30);
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to resend OTP.";
+      const waitSec = err.response?.data?.waitSeconds;
+      if (waitSec) startResendCooldown(waitSec);
+      setError(msg);
+    }
+  };
+
+  const startResendCooldown = (seconds) => {
+    setResendCooldown(seconds);
+    const interval = setInterval(() => {
+      setResendCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
   };
 
   const handleOTPChange = (index, value) => {
@@ -57,7 +101,6 @@ const Login = () => {
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (value && index < 5) {
       document.getElementById(`otp-input-${index + 1}`)?.focus();
     }
@@ -73,25 +116,19 @@ const Login = () => {
     <div className="min-h-screen flex">
       {/* Left Side - Brand Section */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-blue-700 flex-col justify-between p-12 relative overflow-hidden">
-        {/* Decorative Background */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute w-96 h-96 bg-white rounded-full -top-48 -left-48"></div>
           <div className="absolute w-72 h-72 bg-white rounded-full bottom-0 right-0"></div>
         </div>
 
-        {/* Content */}
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-12">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-sm font-semibold text-blue-600">
-              BW
-            </div>
+            <img src={logo} alt="" className="h-10 w-10" />
             <span className="text-2xl font-bold text-white">Beyond Workz</span>
           </div>
         </div>
 
-        {/* Center - Illustration placeholder */}
         <div className="relative z-10 flex flex-col items-center justify-center">
-          {/* You can replace this with an actual image */}
           <div className="text-center">
             <div className="text-6xl mb-6 opacity-80">👨‍💼</div>
             <h2 className="text-4xl font-bold text-white mb-4">
@@ -113,7 +150,6 @@ const Login = () => {
       {/* Right Side - Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 bg-white">
         <div className="w-full max-w-md">
-          {/* Header */}
           <div className="text-center mb-8">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
               Log In To
@@ -134,14 +170,10 @@ const Login = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter Email Address"
+                  placeholder="Enter your email address"
                   className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                   required
                 />
-                <p className="text-xs text-slate-500 mt-2">
-                  💡 Test Email:{" "}
-                  <span className="font-semibold">demo@beyondworkz.com</span>
-                </p>
               </div>
 
               {error && (
@@ -150,79 +182,55 @@ const Login = () => {
                 </div>
               )}
 
-              <div className="mt-6 space-y-4">
-                <button
-                  type="submit"
-                  disabled={loading || !email}
-                  style={{
-                    width: "100%",
-                    padding: "12px 24px",
-                    backgroundColor: "#2563eb",
-                    color: "white",
-                    fontWeight: "600",
-                    borderRadius: "8px",
-                    border: "none",
-                    cursor: loading || !email ? "not-allowed" : "pointer",
-                    opacity: loading || !email ? 0.5 : 1,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "8px",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!loading && email)
-                      e.target.style.backgroundColor = "#1d4ed8";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!loading && email)
-                      e.target.style.backgroundColor = "#2563eb";
-                  }}
-                >
-                  {loading ? (
-                    <>
-                      <svg
-                        className="animate-spin h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Sending OTP...
-                    </>
-                  ) : (
-                    <>
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
+              <button
+                type="submit"
+                disabled={loading || !email}
+                className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
                         stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                      </svg>
-                      Send OTP
-                    </>
-                  )}
-                </button>
-              </div>
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    Sending OTP...
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                    Send OTP
+                  </>
+                )}
+              </button>
 
-              <p className="text-center text-sm text-slate-600 mt-4">
+              <p className="text-center text-sm text-slate-600">
                 New to Beyond Workz?{" "}
                 <button
                   type="button"
@@ -233,17 +241,15 @@ const Login = () => {
                 </button>
               </p>
 
-              {/* Divider */}
-              <div className="flex items-center gap-4 my-6">
+              <div className="flex items-center gap-4 my-2">
                 <div className="flex-1 h-px bg-slate-300"></div>
                 <span className="text-sm text-slate-500">OR</span>
                 <div className="flex-1 h-px bg-slate-300"></div>
               </div>
 
-              {/* Google Login */}
               <button
                 type="button"
-                className="w-full mt-4 py-3 px-6 flex items-center justify-center gap-2 border border-slate-300 text-slate-900 font-semibold rounded-lg hover:bg-slate-50 transition-colors"
+                className="w-full py-3 px-6 flex items-center justify-center gap-2 border border-slate-300 text-slate-900 font-semibold rounded-lg hover:bg-slate-50 transition-colors"
               >
                 <svg
                   className="w-5 h-5"
@@ -258,8 +264,7 @@ const Login = () => {
                 Continue with Google
               </button>
 
-              {/* Footer */}
-              <p className="text-center text-xs text-slate-500 mt-6">
+              <p className="text-center text-xs text-slate-500">
                 Your data is encrypted and used only to match you with relevant
                 job opportunities.
               </p>
@@ -277,7 +282,6 @@ const Login = () => {
                   We sent a 6-digit code to <strong>{email}</strong>
                 </p>
 
-                {/* 6 OTP Input Boxes */}
                 <div className="flex gap-2 justify-center mb-6">
                   {otp.map((digit, index) => (
                     <input
@@ -295,10 +299,17 @@ const Login = () => {
                   ))}
                 </div>
 
-                <div className="rounded-lg bg-blue-50 border border-blue-200 p-3">
-                  <p className="text-xs text-blue-700">
-                    💡 Test OTP: <span className="font-semibold">123456</span>
-                  </p>
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={handleResendOTP}
+                    disabled={resendCooldown > 0}
+                    className="text-sm text-blue-600 hover:underline disabled:text-slate-400 disabled:no-underline disabled:cursor-not-allowed"
+                  >
+                    {resendCooldown > 0
+                      ? `Resend OTP in ${resendCooldown}s`
+                      : "Resend OTP"}
+                  </button>
                 </div>
               </div>
 
@@ -308,11 +319,11 @@ const Login = () => {
                 </div>
               )}
 
-              <div className="mt-6">
+              <div className="space-y-3">
                 <button
                   type="submit"
                   disabled={loading || otp.join("").length !== 6}
-                  className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
@@ -328,14 +339,14 @@ const Login = () => {
                           r="10"
                           stroke="currentColor"
                           strokeWidth="4"
-                        ></circle>
+                        />
                         <path
                           className="opacity-75"
                           fill="currentColor"
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
+                        />
                       </svg>
-                      Verifying OTP...
+                      Verifying...
                     </>
                   ) : (
                     <>
@@ -352,7 +363,7 @@ const Login = () => {
                           d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      Verify OTP
+                      Verify & Login
                     </>
                   )}
                 </button>
@@ -364,7 +375,7 @@ const Login = () => {
                     setOtp(["", "", "", "", "", ""]);
                     setError("");
                   }}
-                  className="w-full mt-3 py-3 px-6 text-slate-600 font-medium rounded-lg border border-slate-300 hover:bg-slate-50 transition-colors"
+                  className="w-full py-3 px-6 text-slate-600 font-medium rounded-lg border border-slate-300 hover:bg-slate-50 transition-colors"
                 >
                   Change Email
                 </button>

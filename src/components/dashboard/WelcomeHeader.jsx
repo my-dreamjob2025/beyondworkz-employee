@@ -1,8 +1,13 @@
+import useAuth from "../../hooks/useAuth";
+
 const WelcomeHeader = () => {
+  const { user } = useAuth();
+  const firstName = user?.firstName || "there";
+
   return (
     <div>
       <h1 className="text-3xl font-bold text-slate-900">
-        Welcome back, Rahul!
+        Welcome back, {firstName}!
       </h1>
 
       <p className="text-slate-500 mt-1">

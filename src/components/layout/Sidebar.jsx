@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 import dashboardIcon from "../../assets/icons/layout/cube.svg";
 import profileIcon from "../../assets/icons/layout/profile.svg";
@@ -12,6 +14,14 @@ import settingsIcon from "../../assets/icons/layout/setting.svg";
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    await logout();
+    navigate("/login", { replace: true });
+  };
 
   const navItems = [
     { label: "Dashboard", icon: dashboardIcon, path: "/" },
@@ -90,6 +100,27 @@ const Sidebar = () => {
             </button>
           );
         })}
+
+        {/* Logout */}
+        <div className="mt-4 pt-4 border-t border-slate-200">
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
+          >
+            {loggingOut ? (
+              <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            )}
+            {loggingOut ? "Logging out..." : "Logout"}
+          </button>
+        </div>
       </nav>
     </aside>
   );

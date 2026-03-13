@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authService } from "../../services/authService";
+import useAuth from "../../hooks/useAuth";
 
+import logo from "../../assets/logos/beyondworkzlogo.png";
 import notification from "../../assets/icons/layout/Notification.svg";
 import downarrow from "../../assets/icons/layout/down-arrow.svg";
 
@@ -9,12 +10,12 @@ import NotificationDropdown from "./NotificationDropdown";
 
 const Header = () => {
   const navigate = useNavigate();
-  const currentUser = authService.getCurrentUser();
+  const { user: currentUser, logout } = useAuth();
 
   const [showNotifications, setShowNotifications] = useState(false);
 
-  const handleLogout = () => {
-    authService.logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/login");
   };
 
@@ -23,9 +24,7 @@ const Header = () => {
       <div className="flex items-center justify-between px-6 py-3">
         {/* LEFT */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-600">
-            <span className="text-white font-bold text-sm">BW</span>
-          </div>
+          <img src={logo} alt="Beyond Workz" className="h-9 w-auto max-w-[140px] object-contain" />
 
           <span className="text-lg font-semibold text-blue-600">
             Beyond Workz

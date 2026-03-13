@@ -1,0 +1,230 @@
+import { useState } from "react";
+
+const emptyExp = () => ({
+  jobTitle: "",
+  company: "",
+  dateOfJoining: "",
+  relievingDate: "",
+  current: false,
+  location: "",
+  description: "",
+  noticePeriod: "",
+  currentCTC: "",
+  skillsUsed: [],
+});
+
+const ExperienceStep = ({ data, onChange }) => {
+  const experience = data.experience || [];
+  const [editing, setEditing] = useState(experience.length === 0 ? 0 : null);
+  const [form, setForm] = useState(emptyExp());
+
+  const updateForm = (field, value) => setForm((p) => ({ ...p, [field]: value }));
+
+  const formatDate = (d) => {
+    if (!d) return "";
+    const x = new Date(d);
+    return x.toISOString().slice(0, 10);
+  };
+
+  const save = () => {
+    if (!form.jobTitle || !form.company || !form.dateOfJoining) return;
+    const entry = {
+      ...form,
+      dateOfJoining: form.dateOfJoining ? new Date(form.dateOfJoining) : null,
+      relievingDate: form.relievingDate ? new Date(form.relievingDate) : null,
+      current: !!form.current,
+      currentCTC: form.currentCTC ? Number(form.currentCTC) : undefined,
+      noticePeriod: form.noticePeriod?.trim() || undefined,
+      skillsUsed: Array.isArray(form.skillsUsed) ? form.skillsUsed : (form.skillsUsed || "").split(",").map((s) => s.trim()).filter(Boolean),
+    };
+    const updated = [...experience];
+    if (editing === experience.length) {
+      updated.push(entry);
+    } else {
+      updated[editing] = entry;
+    }
+    onChange("experience", updated);
+    setForm(emptyExp());
+    setEditing(null);
+  };
+
+  const remove = (idx) => {
+    onChange("experience", experience.filter((_, i) => i !== idx));
+  };
+
+  const startEdit = (idx) => {
+    const item = idx === experience.length ? emptyExp() : experience[idx];
+    setForm({
+      ...emptyExp(),
+      ...item,
+      dateOfJoining: item.dateOfJoining ? formatDate(item.dateOfJoining) : "",
+      relievingDate: item.relievingDate ? formatDate(item.relievingDate) : "",
+      currentCTC: item.currentCTC ?? "",
+      skillsUsed: Array.isArray(item.skillsUsed) ? item.skillsUsed.join(", ") : "",
+    });
+    setEditing(idx);
+  };
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-xl font-bold text-slate-900">Work Experience</h2>
+        <p className="text-sm text-slate-500 mt-1">Add your professional experience.</p>
+      </div>
+
+      {experience.map((exp, idx) => (
+        <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-start justify-between gap-3">
+          <div>
+            <p className="font-semibold text-slate-800 text-sm">{exp.jobTitle}</p>
+            <p className="text-slate-500 text-xs mt-0.5">{exp.company}</p>
+            <p className="text-slate-400 text-xs mt-0.5">
+              {exp.dateOfJoining ? new Date(exp.dateOfJoining).toLocaleDateString() : ""}
+              {exp.current ? " – Present" : exp.relievingDate ? ` – ${new Date(exp.relievingDate).toLocaleDateString()}` : ""}
+            </p>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <button type="button" onClick={() => startEdit(idx)} className="text-xs text-blue-600 hover:underline">
+              Edit
+            </button>
+            <button type="button" onClick={() => remove(idx)} className="text-xs text-red-500 hover:underline">
+              Remove
+            </button>
+          </div>
+        </div>
+      ))}
+
+      {editing !== null ? (
+        <div className="p-4 rounded-xl border-2 border-blue-200 bg-blue-50/50 space-y-4">
+          <p className="text-sm font-semibold text-slate-800">
+            {editing === experience.length ? "Add Experience" : "Edit Experience"}
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Job Title *</label>
+              <input
+                type="text"
+                value={form.jobTitle}
+                onChange={(e) => updateForm("jobTitle", e.target.value)}
+                placeholder="e.g. Senior Developer"
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Company *</label>
+              <input
+                type="text"
+                value={form.company}
+                onChange={(e) => updateForm("company", e.target.value)}
+                placeholder="e.g. Tech Corp"
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Date of Joining *</label>
+              <input
+                type="date"
+                value={form.dateOfJoining}
+                onChange={(e) => updateForm("dateOfJoining", e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Relieving Date</label>
+              <input
+                type="date"
+                value={form.relievingDate}
+                onChange={(e) => updateForm("relievingDate", e.target.value)}
+                disabled={form.current}
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+              />
+              <label className="flex items-center gap-1.5 mt-1.5 cursor-pointer">
+                <input type="checkbox" checked={form.current} onChange={(e) => updateForm("current", e.target.checked)} className="accent-blue-600" />
+                <span className="text-xs text-slate-500">Currently working</span>
+              </label>
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-slate-600 mb-1">Location</label>
+            <input
+              type="text"
+              value={form.location}
+              onChange={(e) => updateForm("location", e.target.value)}
+              placeholder="e.g. Mumbai"
+              className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-slate-600 mb-1">Description</label>
+            <textarea
+              value={form.description}
+              onChange={(e) => updateForm("description", e.target.value)}
+              placeholder="Describe your responsibilities..."
+              rows={3}
+              maxLength={1000}
+              className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Notice Period</label>
+              <input
+                type="text"
+                value={form.noticePeriod}
+                onChange={(e) => updateForm("noticePeriod", e.target.value)}
+                placeholder="e.g. 30 days, Immediate"
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Current CTC (LPA)</label>
+              <input
+                type="number"
+                value={form.currentCTC}
+                onChange={(e) => updateForm("currentCTC", e.target.value)}
+                placeholder="e.g. 8.5"
+                min={0}
+                step={0.1}
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-slate-600 mb-1">Skills Used</label>
+            <input
+              type="text"
+              value={typeof form.skillsUsed === "string" ? form.skillsUsed : (Array.isArray(form.skillsUsed) ? form.skillsUsed.join(", ") : "")}
+              onChange={(e) => updateForm("skillsUsed", e.target.value)}
+              placeholder="Comma-separated, e.g. React, Node.js"
+              className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex gap-2 pt-1">
+            <button
+              type="button"
+              onClick={save}
+              disabled={!form.jobTitle || !form.company || !form.dateOfJoining}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-medium rounded-lg"
+            >
+              Save
+            </button>
+            <button type="button" onClick={() => setEditing(null)} className="px-4 py-2 border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50">
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => startEdit(experience.length)}
+          className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm text-slate-500 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50"
+        >
+          + Add Experience
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default ExperienceStep;

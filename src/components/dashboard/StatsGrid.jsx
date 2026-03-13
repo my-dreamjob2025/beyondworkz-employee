@@ -6,38 +6,10 @@ import viewsIcon from "../../assets/icons/dashboard/views.svg";
 import interviewIcon from "../../assets/icons/dashboard/calender-color.svg";
 
 const stats = [
-  {
-    title: "Applied Jobs",
-    value: "24",
-    note: "+3 this week",
-    icon: appliedIcon,
-    iconBg: "bg-blue-100",
-    noteColor: "text-green-600",
-  },
-  {
-    title: "Saved Jobs",
-    value: "12",
-    note: "No change",
-    icon: savedIcon,
-    iconBg: "bg-orange-100",
-    noteColor: "text-slate-400",
-  },
-  {
-    title: "Profile Views",
-    value: "45",
-    note: "+12% vs last week",
-    icon: viewsIcon,
-    iconBg: "bg-green-100",
-    noteColor: "text-green-600",
-  },
-  {
-    title: "Interviews",
-    value: "02",
-    note: "Upcoming this week",
-    icon: interviewIcon,
-    iconBg: "bg-purple-100",
-    noteColor: "text-slate-400",
-  },
+  { title: "Applied Jobs", value: "0", note: "-", icon: appliedIcon, iconBg: "bg-blue-100", noteColor: "text-slate-400" },
+  { title: "Saved Jobs", value: "0", note: "-", icon: savedIcon, iconBg: "bg-orange-100", noteColor: "text-slate-400" },
+  { title: "Profile Views", value: "0", note: "-", icon: viewsIcon, iconBg: "bg-green-100", noteColor: "text-slate-400" },
+  { title: "Interviews", value: "0", note: "-", icon: interviewIcon, iconBg: "bg-purple-100", noteColor: "text-slate-400" },
 ];
 
 const StatsGrid = () => {

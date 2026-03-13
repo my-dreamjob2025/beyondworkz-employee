@@ -1,4 +1,4 @@
-import FooterLogo from "../../assets/icons/common-icon/linkedin.svg";
+import FooterLogo from "../../assets/logos/beyondworkzlogo.png";
 import LinkedinIcon from "../../assets/icons/common-icon/linkedin.svg";
 import TwitterIcon from "../../assets/icons/common-icon/twitter.svg";
 import FacebookIcon from "../../assets/icons/common-icon/facebook.svg";
