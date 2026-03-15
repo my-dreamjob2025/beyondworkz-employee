@@ -9,13 +9,14 @@ import SkillsStep from "../profile-setup/SkillsStep";
 import WorkPrefsStep from "../profile-setup/WorkPrefsStep";
 import EducationStep from "../profile-setup/EducationStep";
 import ExperienceStep from "../profile-setup/ExperienceStep";
+import BlueCollarExperienceStep from "../profile-setup/BlueCollarExperienceStep";
 import ResumeStep from "../profile-setup/ResumeStep";
 
 const TABS = [
   { id: "basic", label: "Basic Info", icon: "👤" },
   { id: "professional", label: "Professional", icon: "💼", whiteCollarOnly: true },
   { id: "skills", label: "Skills", icon: "⚡" },
-  { id: "experience", label: "Experience", icon: "📋", whiteCollarOnly: true },
+  { id: "experience", label: "Experience", blueCollarLabel: "Work History", icon: "📋" },
   { id: "education", label: "Education", icon: "🎓" },
   { id: "workprefs", label: "Work Prefs", icon: "🔧", blueCollarOnly: true },
   { id: "resume", label: "Resume", icon: "📄", whiteCollarOnly: true },
@@ -36,7 +37,9 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSaved, initialTab })
     workStatus: "",
     years: "00",
     months: "00",
+    avatar: null,
     availability: "",
+    whatsappNumber: "",
     skills: [],
     experience: [],
     education: [],
@@ -70,7 +73,9 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSaved, initialTab })
         workStatus: u.workStatus || "",
         years: u.years || "00",
         months: u.months || "00",
+        avatar: u.avatar || null,
         availability: p.availability || "",
+        whatsappNumber: p.whatsappNumber || "",
         skills: p.skills || [],
         experience: p.experience || [],
         education: p.education || [],
@@ -85,6 +90,7 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSaved, initialTab })
   };
 
   const handleSave = async () => {
+    if (!initialData?.user) return;
     setSaving(true);
     setError("");
     try {
@@ -109,19 +115,36 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSaved, initialTab })
   const content = () => {
     switch (activeTab) {
       case "basic":
-        return <BasicInfoStep data={formData} onChange={handleChange} employeeType={employeeType} />;
+        return (
+          <BasicInfoStep
+            data={formData}
+            onChange={handleChange}
+            employeeType={employeeType}
+            onAvatarUpdated={onSaved}
+          />
+        );
       case "professional":
         return <ProfessionalStep data={formData} onChange={handleChange} />;
       case "skills":
         return <SkillsStep data={formData} onChange={handleChange} employeeType={employeeType} />;
       case "experience":
-        return <ExperienceStep data={formData} onChange={handleChange} />;
+        return employeeType === "bluecollar" ? (
+          <BlueCollarExperienceStep data={formData} onChange={handleChange} />
+        ) : (
+          <ExperienceStep data={formData} onChange={handleChange} />
+        );
       case "workprefs":
         return <WorkPrefsStep data={formData} onChange={handleChange} />;
       case "education":
         return <EducationStep data={formData} onChange={handleChange} />;
       case "resume":
-        return <ResumeStep data={formData} />;
+        return (
+          <ResumeStep
+            data={formData}
+            onChange={handleChange}
+            onSaved={onSaved}
+          />
+        );
       default:
         return null;
     }
@@ -160,7 +183,7 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSaved, initialTab })
                   }`}
                 >
                   <span>{tab.icon}</span>
-                  {tab.label}
+                  {employeeType === "bluecollar" && tab.blueCollarLabel ? tab.blueCollarLabel : tab.label}
                 </button>
               ))}
             </nav>

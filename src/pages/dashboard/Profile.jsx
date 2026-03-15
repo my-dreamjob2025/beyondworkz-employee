@@ -8,7 +8,9 @@ import ResumeSection from "../../components/profile/ResumeSection";
 import ResumeHeadlineSection from "../../components/profile/ResumeHeadlineSection";
 import SkillsSection from "../../components/profile/SkillsSection";
 import WorkExperience from "../../components/profile/WorkExperience";
+import BlueCollarWorkExperience from "../../components/profile/BlueCollarWorkExperience";
 import EducationSection from "../../components/profile/EducationSection";
+import BlueCollarWorkPrefsSection from "../../components/profile/BlueCollarWorkPrefsSection";
 import EditProfileModal from "../../components/profile/EditProfileModal";
 
 const Profile = () => {
@@ -73,13 +75,18 @@ const Profile = () => {
         user={user}
         profile={profile}
         onEditProfile={() => openEditModal("basic")}
-        onAddMissing={() => openEditModal("resume")}
+        onAddMissing={(tab) => openEditModal(tab)}
+        onAvatarUpdated={async () => {
+          await fetchProfile();
+          await initAuth();
+        }}
       />
 
       {/* Main layout: Quick links (left) + Content (right) */}
       <div className="flex gap-8">
         {/* Quick links sidebar */}
         <QuickLinksSidebar
+          employeeType={user?.employeeType}
           onNavigate={scrollToSection}
           onUploadResume={() => openEditModal("resume")}
           onAddEducation={() => openEditModal("education")}
@@ -93,6 +100,7 @@ const Profile = () => {
             <ResumeSection
               resume={profile?.whiteCollarDetails?.resume}
               onEdit={() => openEditModal("resume")}
+              onDeleted={fetchProfile}
             />
           )}
 
@@ -104,15 +112,29 @@ const Profile = () => {
             />
           )}
 
+          {!isWhiteCollar && (
+            <BlueCollarWorkPrefsSection
+              profile={profile}
+              onEdit={(tab) => openEditModal(tab)}
+            />
+          )}
+
           <SkillsSection
             skills={profile?.skills}
             onEdit={() => openEditModal("skills")}
           />
 
-          <WorkExperience
-            experience={profile?.experience}
-            onEdit={() => openEditModal("experience")}
-          />
+          {isWhiteCollar ? (
+            <WorkExperience
+              experience={profile?.experience}
+              onEdit={() => openEditModal("experience")}
+            />
+          ) : (
+            <BlueCollarWorkExperience
+              experience={profile?.experience}
+              onEdit={() => openEditModal("experience")}
+            />
+          )}
 
           <EducationSection
             education={profile?.education}
@@ -122,7 +144,7 @@ const Profile = () => {
       </div>
 
       <EditProfileModal
-        isOpen={editModalOpen}
+        isOpen={editModalOpen && !!user}
         onClose={closeEditModal}
         initialData={initialFormData}
         initialTab={editModalTab}

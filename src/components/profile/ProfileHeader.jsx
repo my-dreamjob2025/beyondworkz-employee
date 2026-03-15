@@ -12,7 +12,20 @@ const ProfileHeader = ({ user: userProp, resumeUrl, onEditProfile }) => {
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col sm:flex-row gap-6">
       {avatarUrl ? (
-        <img src={avatarUrl} alt="" className="w-20 h-20 rounded-full object-cover shrink-0" />
+        <div className="relative w-20 h-20 rounded-full overflow-hidden bg-slate-100 shrink-0">
+          <img
+            src={avatarUrl}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center"
+            onError={(e) => {
+              e.target.style.display = "none";
+              e.target.nextElementSibling?.classList.remove("hidden");
+            }}
+          />
+          <div className="absolute inset-0 w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center hidden" aria-hidden="true">
+            <span className="text-white text-xl font-bold">{initials}</span>
+          </div>
+        </div>
       ) : (
         <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center shrink-0">
           <span className="text-white text-2xl font-bold">{initials}</span>

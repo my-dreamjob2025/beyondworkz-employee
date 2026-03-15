@@ -1,26 +1,33 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "../contexts/AuthContext";
 import useAuth from "../hooks/useAuth";
+import AuthInitializer from "../components/AuthInitializer";
 
 import LandingPage from "../pages/public/LandingPage";
-import JobSearchPage from "../pages/public/JobSearchPage";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+import AuthCallback from "../pages/auth/AuthCallback";
 
-import DashboardLayout from "../layouts/DashboardLayout";
-
-import Dashboard from "../pages/dashboard/Dashboard";
-import Profile from "../pages/dashboard/Profile";
-import Applications from "../pages/dashboard/Applications";
-import JobSaved from "../pages/dashboard/SavedJobs";
-import JobAlerts from "../pages/dashboard/JobAlerts";
-import Interviews from "../pages/dashboard/Interviews";
-import Messages from "../pages/dashboard/Messages";
-import Settings from "../pages/dashboard/Setting";
-
-import PageNotFound from "../pages/common/PageNotFound";
 import ProtectedRoute from "./ProtectedRoute";
-import CompleteProfile from "../pages/profile/CompleteProfile";
+import PageNotFound from "../pages/common/PageNotFound";
+
+const JobSearchPage = lazy(() => import("../pages/public/JobSearchPage"));
+const DashboardLayout = lazy(() => import("../layouts/DashboardLayout"));
+const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
+const Profile = lazy(() => import("../pages/dashboard/Profile"));
+const Applications = lazy(() => import("../pages/dashboard/Applications"));
+const JobSaved = lazy(() => import("../pages/dashboard/SavedJobs"));
+const JobAlerts = lazy(() => import("../pages/dashboard/JobAlerts"));
+const Interviews = lazy(() => import("../pages/dashboard/Interviews"));
+const Messages = lazy(() => import("../pages/dashboard/Messages"));
+const Settings = lazy(() => import("../pages/dashboard/Setting"));
+const CompleteProfile = lazy(() => import("../pages/profile/CompleteProfile"));
+
+const PageLoader = () => (
+  <div className="min-h-[50vh] flex items-center justify-center">
+    <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+  </div>
+);
 
 // Shows dashboard if logged in, landing page if not
 const HomeRoute = () => {
@@ -40,7 +47,7 @@ const HomeRoute = () => {
 const AppRoutes = () => {
   return (
     <Router>
-      <AuthProvider>
+      <AuthInitializer>
         <Routes>
           {/* Home — dashboard if logged in, landing page if not */}
           <Route path="/" element={<HomeRoute />} />
@@ -50,13 +57,18 @@ const AppRoutes = () => {
             path="/complete-profile"
             element={
               <ProtectedRoute>
-                <CompleteProfile />
+                <Suspense fallback={<PageLoader />}>
+                  <CompleteProfile />
+                </Suspense>
               </ProtectedRoute>
             }
           />
 
+          {/* OAuth callback — handles Google sign-in redirect */}
+          <Route path="/auth/callback" element={<AuthCallback />} />
+
           {/* Public Routes */}
-          <Route path="/jobs" element={<JobSearchPage />} />
+          <Route path="/jobs" element={<Suspense fallback={<PageLoader />}><JobSearchPage /></Suspense>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
@@ -65,7 +77,9 @@ const AppRoutes = () => {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <DashboardLayout />
+                <Suspense fallback={<PageLoader />}>
+                  <DashboardLayout />
+                </Suspense>
               </ProtectedRoute>
             }
           >
@@ -83,7 +97,7 @@ const AppRoutes = () => {
           {/* Global 404 */}
           <Route path="*" element={<PageNotFound />} />
         </Routes>
-      </AuthProvider>
+      </AuthInitializer>
     </Router>
   );
 };

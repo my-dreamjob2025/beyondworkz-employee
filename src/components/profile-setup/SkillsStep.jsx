@@ -78,9 +78,9 @@ const SkillsStep = ({ data, onChange, employeeType }) => {
             Added ({skills.length})
           </p>
           <div className="flex flex-wrap gap-2">
-            {skills.map((s) => (
+            {skills.map((s, idx) => (
               <span
-                key={s.name}
+                key={`${s.name}-${idx}`}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-full"
               >
                 {s.name}

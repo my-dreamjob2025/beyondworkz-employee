@@ -1,11 +1,13 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { authService } from "../../services/authService";
 import useAuth from "../../hooks/useAuth";
-import logo from "../../assets/logos/beyondworkzlogo.png";
+import AuthLeftPanel from "../../components/auth/AuthLeftPanel";
+import GoogleIcon from "../../assets/icons/common-icon/google-icon.svg";
 
 const Register = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { login } = useAuth();
 
   const [step, setStep] = useState("details");
@@ -22,6 +24,10 @@ const Register = () => {
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleGoogleRegister = () => {
+    window.location.href = authService.getGoogleRegisterUrl(formData.employeeType);
   };
 
   const handleSendDetailsAndOTP = async (e) => {
@@ -55,7 +61,7 @@ const Register = () => {
 
     try {
       const data = await authService.verifyEmployeeOtp(formData.email, otpString);
-      login(data.accessToken, data.user);
+      login(data.accessToken, data.refreshToken ?? null, data.user);
       // New users always go through profile completion
       navigate("/complete-profile", { replace: true });
     } catch (err) {
@@ -70,7 +76,7 @@ const Register = () => {
     if (resendCooldown > 0) return;
     setError("");
     try {
-      await authService.resendOtp(formData.email);
+      await authService.resendOtp(formData.email, "signup");
       startResendCooldown(30);
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to resend OTP.";
@@ -80,18 +86,26 @@ const Register = () => {
     }
   };
 
+  const cooldownRef = useRef(null);
+
   const startResendCooldown = (seconds) => {
+    if (cooldownRef.current) clearInterval(cooldownRef.current);
     setResendCooldown(seconds);
-    const interval = setInterval(() => {
+    cooldownRef.current = setInterval(() => {
       setResendCooldown((prev) => {
         if (prev <= 1) {
-          clearInterval(interval);
+          if (cooldownRef.current) clearInterval(cooldownRef.current);
+          cooldownRef.current = null;
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
   };
+
+  useEffect(() => () => {
+    if (cooldownRef.current) clearInterval(cooldownRef.current);
+  }, []);
 
   const handleOTPChange = (index, value) => {
     if (value.length > 1) value = value.slice(-1);
@@ -112,43 +126,26 @@ const Register = () => {
     }
   };
 
+  const handleOTPPaste = (e) => {
+    e.preventDefault();
+    const pasted = (e.clipboardData?.getData("text") || "").replace(/\D/g, "");
+    if (pasted.length === 0) return;
+    const digits = pasted.slice(0, 6).split("");
+    const newOtp = [...otp];
+    digits.forEach((d, i) => {
+      newOtp[i] = d;
+    });
+    setOtp(newOtp);
+    const nextIndex = Math.min(digits.length, 5);
+    document.getElementById(`register-otp-input-${nextIndex}`)?.focus();
+  };
+
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Brand Section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-blue-700 flex-col justify-between p-12 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute w-96 h-96 bg-white rounded-full -top-48 -left-48"></div>
-          <div className="absolute w-72 h-72 bg-white rounded-full bottom-0 right-0"></div>
-        </div>
-
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-12">
-            <img src={logo} alt="" className="h-10 w-10" />
-            <span className="text-2xl font-bold text-white">Beyond Workz</span>
-          </div>
-        </div>
-
-        <div className="relative z-10 flex flex-col items-center justify-center">
-          <div className="text-center">
-            <div className="text-6xl mb-6 opacity-80">👨‍💼</div>
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Find Work Beyond Limits
-            </h2>
-            <p className="text-blue-100 text-lg mb-8 max-w-sm">
-              Discover blue-collar and white-collar opportunities tailored to
-              your skill, experience, and ambition.
-            </p>
-            <div className="inline-flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-full font-semibold text-sm">
-              ⭐ Trusted by 50,000+ job seekers
-            </div>
-          </div>
-        </div>
-
-        <div className="relative z-10"></div>
-      </div>
+    <div className="min-h-screen flex w-full">
+      <AuthLeftPanel />
 
       {/* Right Side - Register Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 bg-white">
+      <div className="w-full lg:w-1/2 flex-shrink-0 flex items-center justify-center p-4 sm:p-8 bg-white">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
@@ -171,7 +168,7 @@ const Register = () => {
                     value={formData.firstName}
                     onChange={handleChange}
                     placeholder="John"
-                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
                     required
                   />
                 </div>
@@ -185,7 +182,7 @@ const Register = () => {
                     value={formData.lastName}
                     onChange={handleChange}
                     placeholder="Doe"
-                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -200,7 +197,7 @@ const Register = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
                   required
                 />
               </div>
@@ -253,16 +250,34 @@ const Register = () => {
                 </div>
               </div>
 
-              {error && (
+              {(error || searchParams.get("error")) && (
                 <div className="rounded-lg bg-red-50 border border-red-200 p-3">
-                  <p className="text-sm text-red-700">{error}</p>
+                  <p className="text-sm text-red-700">
+                    {error || decodeURIComponent(searchParams.get("error") || "")}
+                  </p>
                 </div>
               )}
+
+              <div className="flex items-center gap-4 my-2">
+                <div className="flex-1 h-px bg-slate-300"></div>
+                <span className="text-sm text-slate-500">OR</span>
+                <div className="flex-1 h-px bg-slate-300"></div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleGoogleRegister}
+                className="w-full py-3 px-6 flex items-center justify-center gap-2 border border-slate-300 text-slate-900 font-semibold rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                <img src={GoogleIcon} alt="Google" className="w-5 h-5" />
+                Continue with Google
+              </button>
 
               <button
                 type="submit"
                 disabled={loading || !formData.firstName.trim() || !formData.email.trim()}
-                className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 px-6 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 hover:opacity-90"
+                style={{ backgroundColor: "#1447E6" }}
               >
                 {loading ? (
                   <>
@@ -287,7 +302,8 @@ const Register = () => {
                 <button
                   type="button"
                   onClick={() => navigate("/login")}
-                  className="text-blue-600 font-semibold hover:underline"
+                  className="font-semibold hover:underline"
+              style={{ color: "#1447E6" }}
                 >
                   Login
                 </button>
@@ -317,7 +333,8 @@ const Register = () => {
                       value={digit}
                       onChange={(e) => handleOTPChange(index, e.target.value)}
                       onKeyDown={(e) => handleOTPKeyDown(index, e)}
-                      className="w-12 h-12 text-center text-2xl font-semibold border-2 border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600"
+                      onPaste={handleOTPPaste}
+                      className="w-12 h-12 text-center text-2xl font-semibold border-2 border-slate-300 rounded-lg focus:outline-none focus:border-[#1447E6] focus:ring-2 focus:ring-[#1447E6]"
                       placeholder="0"
                     />
                   ))}
@@ -347,7 +364,8 @@ const Register = () => {
                 <button
                   type="submit"
                   disabled={loading || otp.join("").length !== 6}
-                  className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-3 px-6 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 hover:opacity-90"
+                  style={{ backgroundColor: "#1447E6" }}
                 >
                   {loading ? (
                     <>

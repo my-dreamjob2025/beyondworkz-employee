@@ -1,4 +1,23 @@
+const WHITE_COLLAR_LINKS = [
+  { id: "resume", label: "Resume", action: "Upload", scrollId: "resume", needsAction: true },
+  { id: "resume-headline", label: "Resume headline", scrollId: "resume-headline", editTab: "professional" },
+  { id: "key-skills", label: "Key skills", scrollId: "key-skills", editTab: "skills" },
+  { id: "education", label: "Education", action: "Add", scrollId: "education", needsAction: true },
+  { id: "projects", label: "Projects", action: "Add", editTab: "professional", needsAction: true },
+  { id: "career-profile", label: "Career profile", scrollId: "employment", editTab: "experience" },
+  { id: "personal-details", label: "Personal details", editTab: "basic" },
+];
+
+const BLUE_COLLAR_LINKS = [
+  { id: "work-prefs", label: "Work preferences", scrollId: "work-prefs", editTab: "workprefs" },
+  { id: "key-skills", label: "Key skills", scrollId: "key-skills", editTab: "skills" },
+  { id: "work-history", label: "Work history", scrollId: "employment", editTab: "experience" },
+  { id: "education", label: "Education", action: "Add", scrollId: "education", needsAction: true },
+  { id: "personal-details", label: "Personal details", editTab: "basic" },
+];
+
 const QuickLinksSidebar = ({
+  employeeType = "whitecollar",
   activeSection,
   onNavigate,
   onUploadResume,
@@ -6,6 +25,8 @@ const QuickLinksSidebar = ({
   onAddProjects,
   onEdit,
 }) => {
+  const links = employeeType === "bluecollar" ? BLUE_COLLAR_LINKS : WHITE_COLLAR_LINKS;
+
   const handleLabelClick = (link) => {
     if (link.scrollId && onNavigate) {
       onNavigate(link.scrollId);
@@ -14,18 +35,12 @@ const QuickLinksSidebar = ({
     }
   };
 
-  const links = [
-    { id: "resume", label: "Resume", action: "Upload", scrollId: "resume", onActionClick: onUploadResume },
-    { id: "resume-headline", label: "Resume headline", scrollId: "resume-headline", editTab: "professional" },
-    { id: "key-skills", label: "Key skills", scrollId: "key-skills", editTab: "skills" },
-    { id: "education", label: "Education", action: "Add", scrollId: "education", onActionClick: onAddEducation },
-    { id: "it-skills", label: "IT skills", scrollId: "key-skills", editTab: "skills" },
-    { id: "projects", label: "Projects", action: "Add", editTab: "professional", onActionClick: onAddProjects },
-    { id: "profile-summary", label: "Profile summary", scrollId: "resume-headline", editTab: "professional" },
-    { id: "accomplishments", label: "Accomplishments", editTab: "professional" },
-    { id: "career-profile", label: "Career profile", scrollId: "employment", editTab: "experience" },
-    { id: "personal-details", label: "Personal details", editTab: "basic" },
-  ];
+  const getActionClick = (link) => {
+    if (link.id === "resume") return onUploadResume;
+    if (link.id === "education") return onAddEducation;
+    if (link.id === "projects") return onAddProjects;
+    return null;
+  };
 
   return (
     <aside className="w-56 shrink-0">
@@ -44,10 +59,10 @@ const QuickLinksSidebar = ({
             >
               {link.label}
             </button>
-            {link.action && link.onActionClick && (
+            {link.action && getActionClick(link) && (
               <button
                 type="button"
-                onClick={link.onActionClick}
+                onClick={getActionClick(link)}
                 className="text-xs font-medium text-orange-600 hover:text-orange-700 opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 {link.action}

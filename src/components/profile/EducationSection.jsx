@@ -1,6 +1,16 @@
+const toYear = (d) => {
+  if (!d) return "";
+  if (typeof d === "string") return /^\d{4}/.test(d) ? d.slice(0, 4) : "";
+  if (d instanceof Date) return isNaN(d.getTime()) ? "" : d.getFullYear().toString();
+  return "";
+};
+
 const EducationSection = ({ education = [], onEdit }) => {
   return (
-    <div id="education" className="scroll-mt-24 bg-white border border-slate-200 rounded-xl p-6">
+    <div
+      id="education"
+      className="scroll-mt-24 bg-white border border-slate-200 rounded-xl p-6"
+    >
       <div className="flex justify-between items-start mb-4">
         <h3 className="font-semibold text-slate-900">Education</h3>
       </div>
@@ -22,7 +32,9 @@ const EducationSection = ({ education = [], onEdit }) => {
               <div className="flex-1">
                 <div className="flex items-start justify-between gap-2">
                   <h4 className="font-semibold text-slate-800">
-                    {[edu.degree, edu.level].filter(Boolean).join(" - ") || edu.institution || "Education"}
+                    {[edu.degree, edu.level].filter(Boolean).join(" - ") ||
+                      edu.institution ||
+                      "Education"}
                     {edu.fieldOfStudy ? ` ${edu.fieldOfStudy}` : ""}
                   </h4>
                   <button
@@ -31,16 +43,28 @@ const EducationSection = ({ education = [], onEdit }) => {
                     className="text-slate-400 hover:text-slate-600 p-0.5 shrink-0"
                     aria-label="Edit"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                      />
                     </svg>
                   </button>
                 </div>
-                <p className="text-sm text-slate-500 mt-0.5">{edu.institution}</p>
+                <p className="text-sm text-slate-500 mt-0.5">
+                  {edu.institution}
+                </p>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  {edu.startDate ? new Date(edu.startDate).getFullYear() : ""}
+                  {toYear(edu.startDate)}
                   {edu.endDate || edu.currentlyStudying
-                    ? ` – ${edu.currentlyStudying ? "Present" : new Date(edu.endDate).getFullYear()}`
+                    ? ` – ${edu.currentlyStudying ? "Present" : toYear(edu.endDate)}`
                     : ""}
                   | Full Time
                 </p>

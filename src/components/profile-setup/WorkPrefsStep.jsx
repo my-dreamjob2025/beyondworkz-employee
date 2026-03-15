@@ -10,6 +10,10 @@ const WorkPrefsStep = ({ data, onChange }) => {
     onChange("blueCollarDetails", { ...bc, [field]: value });
   };
 
+  const updateProfile = (field, value) => {
+    onChange(field, value);
+  };
+
   const toggleArea = (area) => {
     const current = bc.preferredAreas || [];
     const updated = current.includes(area)
@@ -27,31 +31,29 @@ const WorkPrefsStep = ({ data, onChange }) => {
         </p>
       </div>
 
-      {/* Vehicle Washing Experience */}
+      {/* Availability */}
       <div>
         <p className="text-sm font-medium text-slate-700 mb-2">
-          Do you have vehicle washing experience?
+          Availability <span className="text-red-500">*</span>
         </p>
-        <div className="flex gap-3">
-          {[
-            { label: "Yes", value: true },
-            { label: "No", value: false },
-          ].map(({ label, value }) => (
+        <div className="flex gap-3 flex-wrap">
+          {["full-time", "part-time", "weekends"].map((a) => (
             <label
-              key={label}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 cursor-pointer transition-all text-sm font-medium ${
-                bc.hasVehicleWashingExperience === value
+              key={a}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 cursor-pointer transition-all text-sm font-medium capitalize ${
+                data.availability === a
                   ? "border-blue-600 bg-blue-50 text-blue-700"
                   : "border-slate-200 text-slate-700 hover:border-slate-300"
               }`}
             >
               <input
                 type="radio"
+                name="availability"
                 className="hidden"
-                checked={bc.hasVehicleWashingExperience === value}
-                onChange={() => update("hasVehicleWashingExperience", value)}
+                checked={data.availability === a}
+                onChange={() => updateProfile("availability", a)}
               />
-              {label}
+              {a.replace("-", " ")}
             </label>
           ))}
         </div>
@@ -67,202 +69,20 @@ const WorkPrefsStep = ({ data, onChange }) => {
             { label: "Yes", value: true },
             { label: "No", value: false },
           ].map(({ label, value }) => (
-            <label
+            <button
               key={label}
+              type="button"
+              role="radio"
+              aria-checked={bc.hasVehicleWashingExperience === value}
+              onClick={() => update("hasVehicleWashingExperience", value)}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 cursor-pointer transition-all text-sm font-medium ${
                 bc.hasVehicleWashingExperience === value
                   ? "border-blue-600 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-700 hover:border-slate-300"
+                  : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
               }`}
             >
-              <input
-                type="radio"
-                className="hidden"
-                checked={bc.hasVehicleWashingExperience === value}
-                onChange={() => update("hasVehicleWashingExperience", value)}
-              />
               {label}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Vehicle Washing Experience */}
-      <div>
-        <p className="text-sm font-medium text-slate-700 mb-2">
-          Do you have vehicle washing experience?
-        </p>
-        <div className="flex gap-3">
-          {[
-            { label: "Yes", value: true },
-            { label: "No", value: false },
-          ].map(({ label, value }) => (
-            <label
-              key={label}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 cursor-pointer transition-all text-sm font-medium ${
-                bc.hasVehicleWashingExperience === value
-                  ? "border-blue-600 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-700 hover:border-slate-300"
-              }`}
-            >
-              <input
-                type="radio"
-                className="hidden"
-                checked={bc.hasVehicleWashingExperience === value}
-                onChange={() => update("hasVehicleWashingExperience", value)}
-              />
-              {label}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Vehicle Washing Experience */}
-      <div>
-        <p className="text-sm font-medium text-slate-700 mb-2">
-          Do you have vehicle washing experience?
-        </p>
-        <div className="flex gap-3">
-          {[
-            { label: "Yes", value: true },
-            { label: "No", value: false },
-          ].map(({ label, value }) => (
-            <label
-              key={label}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 cursor-pointer transition-all text-sm font-medium ${
-                bc.hasVehicleWashingExperience === value
-                  ? "border-blue-600 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-700 hover:border-slate-300"
-              }`}
-            >
-              <input
-                type="radio"
-                className="hidden"
-                checked={bc.hasVehicleWashingExperience === value}
-                onChange={() => update("hasVehicleWashingExperience", value)}
-              />
-              {label}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Vehicle Washing Experience */}
-      <div>
-        <p className="text-sm font-medium text-slate-700 mb-2">
-          Do you have vehicle washing experience?
-        </p>
-        <div className="flex gap-3">
-          {[
-            { label: "Yes", value: true },
-            { label: "No", value: false },
-          ].map(({ label, value }) => (
-            <label
-              key={label}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 cursor-pointer transition-all text-sm font-medium ${
-                bc.hasVehicleWashingExperience === value
-                  ? "border-blue-600 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-700 hover:border-slate-300"
-              }`}
-            >
-              <input
-                type="radio"
-                className="hidden"
-                checked={bc.hasVehicleWashingExperience === value}
-                onChange={() => update("hasVehicleWashingExperience", value)}
-              />
-              {label}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Vehicle Washing Experience */}
-      <div>
-        <p className="text-sm font-medium text-slate-700 mb-2">
-          Do you have vehicle washing experience?
-        </p>
-        <div className="flex gap-3">
-          {[
-            { label: "Yes", value: true },
-            { label: "No", value: false },
-          ].map(({ label, value }) => (
-            <label
-              key={label}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 cursor-pointer transition-all text-sm font-medium ${
-                bc.hasVehicleWashingExperience === value
-                  ? "border-blue-600 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-700 hover:border-slate-300"
-              }`}
-            >
-              <input
-                type="radio"
-                className="hidden"
-                checked={bc.hasVehicleWashingExperience === value}
-                onChange={() => update("hasVehicleWashingExperience", value)}
-              />
-              {label}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Vehicle Washing Experience */}
-      <div>
-        <p className="text-sm font-medium text-slate-700 mb-2">
-          Do you have vehicle washing experience?
-        </p>
-        <div className="flex gap-3">
-          {[
-            { label: "Yes", value: true },
-            { label: "No", value: false },
-          ].map(({ label, value }) => (
-            <label
-              key={label}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 cursor-pointer transition-all text-sm font-medium ${
-                bc.hasVehicleWashingExperience === value
-                  ? "border-blue-600 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-700 hover:border-slate-300"
-              }`}
-            >
-              <input
-                type="radio"
-                className="hidden"
-                checked={bc.hasVehicleWashingExperience === value}
-                onChange={() => update("hasVehicleWashingExperience", value)}
-              />
-              {label}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Vehicle Washing Experience */}
-      <div>
-        <p className="text-sm font-medium text-slate-700 mb-2">
-          Do you have vehicle washing experience?
-        </p>
-        <div className="flex gap-3">
-          {[
-            { label: "Yes", value: true },
-            { label: "No", value: false },
-          ].map(({ label, value }) => (
-            <label
-              key={label}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 cursor-pointer transition-all text-sm font-medium ${
-                bc.hasVehicleWashingExperience === value
-                  ? "border-blue-600 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-700 hover:border-slate-300"
-              }`}
-            >
-              <input
-                type="radio"
-                className="hidden"
-                checked={bc.hasVehicleWashingExperience === value}
-                onChange={() => update("hasVehicleWashingExperience", value)}
-              />
-              {label}
-            </label>
+            </button>
           ))}
         </div>
       </div>
@@ -277,24 +97,41 @@ const WorkPrefsStep = ({ data, onChange }) => {
             { label: "Yes", value: true },
             { label: "No", value: false },
           ].map(({ label, value }) => (
-            <label
+            <button
               key={label}
+              type="button"
+              role="radio"
+              aria-checked={bc.hasDrivingLicense === value}
+              onClick={() => {
+                const next = { ...bc, hasDrivingLicense: value };
+                if (value === false) next.drivingLicenseNumber = "";
+                onChange("blueCollarDetails", next);
+              }}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 cursor-pointer transition-all text-sm font-medium ${
                 bc.hasDrivingLicense === value
                   ? "border-blue-600 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-700 hover:border-slate-300"
+                  : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
               }`}
             >
-              <input
-                type="radio"
-                className="hidden"
-                checked={bc.hasDrivingLicense === value}
-                onChange={() => update("hasDrivingLicense", value)}
-              />
               {label}
-            </label>
+            </button>
           ))}
         </div>
+        {bc.hasDrivingLicense === true && (
+          <div className="mt-3">
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              License number
+            </label>
+            <input
+              type="text"
+              value={bc.drivingLicenseNumber || ""}
+              onChange={(e) => update("drivingLicenseNumber", e.target.value.trim().toUpperCase())}
+              placeholder="e.g. MH12 1234567890"
+              maxLength={50}
+              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        )}
       </div>
 
       {/* Bike / Scooty */}
@@ -307,24 +144,36 @@ const WorkPrefsStep = ({ data, onChange }) => {
             { label: "Yes", value: true },
             { label: "No", value: false },
           ].map(({ label, value }) => (
-            <label
+            <button
               key={label}
+              type="button"
+              role="radio"
+              aria-checked={bc.hasBikeOrScooty === value}
+              onClick={() => update("hasBikeOrScooty", value)}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 cursor-pointer transition-all text-sm font-medium ${
                 bc.hasBikeOrScooty === value
                   ? "border-blue-600 bg-blue-50 text-blue-700"
-                  : "border-slate-200 text-slate-700 hover:border-slate-300"
+                  : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
               }`}
             >
-              <input
-                type="radio"
-                className="hidden"
-                checked={bc.hasBikeOrScooty === value}
-                onChange={() => update("hasBikeOrScooty", value)}
-              />
               {label}
-            </label>
+            </button>
           ))}
         </div>
+      </div>
+
+      {/* WhatsApp Number */}
+      <div>
+        <p className="text-sm font-medium text-slate-700 mb-2">
+          WhatsApp number
+        </p>
+        <input
+          type="tel"
+          value={data.whatsappNumber || ""}
+          onChange={(e) => updateProfile("whatsappNumber", e.target.value.trim())}
+          placeholder="+91 9876543210"
+          className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
       </div>
 
       {/* Preferred Work Areas */}

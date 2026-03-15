@@ -2,6 +2,13 @@ import { useState } from "react";
 
 const LEVELS = ["10th", "12th", "Diploma", "Undergraduate", "Postgraduate", "Doctorate", "Other"];
 
+const toYearDisplay = (d) => {
+  if (!d) return "";
+  if (typeof d === "string") return d.length <= 4 ? d : d.slice(0, 4);
+  if (d instanceof Date) return d.getFullYear().toString();
+  return String(d).slice(0, 4);
+};
+
 const emptyEdu = () => ({
   level: "",
   degree: "",
@@ -17,20 +24,43 @@ const EducationStep = ({ data, onChange }) => {
   const education = data.education || [];
   const [editing, setEditing] = useState(education.length === 0 ? 0 : null);
   const [form, setForm] = useState(emptyEdu());
+  const [dateError, setDateError] = useState("");
 
   const updateForm = (field, value) => setForm((p) => ({ ...p, [field]: value }));
 
+  const normalizeDate = (d) => {
+    if (!d) return "";
+    if (typeof d === "string") {
+      if (d.length === 10) return d;
+      if (d.length > 10) return d.slice(0, 10);
+      return "";
+    }
+    if (d instanceof Date) return d.toISOString().slice(0, 10);
+    return "";
+  };
+
   const save = () => {
+    setDateError("");
     if (!form.level || !form.institution) return;
+    const toSave = { ...form };
+    toSave.startDate = normalizeDate(form.startDate);
+    toSave.endDate = normalizeDate(form.endDate);
+    const startYear = toSave.startDate ? parseInt(toSave.startDate.slice(0, 4), 10) : null;
+    const endYear = toSave.endDate ? parseInt(toSave.endDate.slice(0, 4), 10) : null;
+    if (startYear && endYear && endYear < startYear) {
+      setDateError("End year must be same or after start year.");
+      return;
+    }
     const updated = [...education];
     if (editing === education.length) {
-      updated.push(form);
+      updated.push(toSave);
     } else {
-      updated[editing] = form;
+      updated[editing] = toSave;
     }
     onChange("education", updated);
     setForm(emptyEdu());
     setEditing(null);
+    setDateError("");
   };
 
   const remove = (idx) => {
@@ -40,6 +70,7 @@ const EducationStep = ({ data, onChange }) => {
   const startEdit = (idx) => {
     setForm(idx === education.length ? emptyEdu() : { ...education[idx] });
     setEditing(idx);
+    setDateError("");
   };
 
   return (
@@ -170,12 +201,17 @@ const EducationStep = ({ data, onChange }) => {
                 Start Year
               </label>
               <input
-                type="number"
-                value={form.startDate ? new Date(form.startDate).getFullYear() : ""}
-                onChange={(e) => updateForm("startDate", `${e.target.value}-01-01`)}
+                type="text"
+                inputMode="numeric"
+                maxLength={4}
+                value={toYearDisplay(form.startDate)}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "");
+                  if (val.length <= 4) {
+                    updateForm("startDate", val ? (val.length === 4 ? `${val}-01-01` : val) : "");
+                  }
+                }}
                 placeholder="2018"
-                min="1980"
-                max={new Date().getFullYear()}
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -184,26 +220,38 @@ const EducationStep = ({ data, onChange }) => {
                 End Year
               </label>
               <input
-                type="number"
-                value={form.endDate ? new Date(form.endDate).getFullYear() : ""}
-                onChange={(e) => updateForm("endDate", `${e.target.value}-01-01`)}
+                type="text"
+                inputMode="numeric"
+                maxLength={4}
+                value={toYearDisplay(form.endDate)}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "");
+                  if (val.length <= 4) {
+                    updateForm("endDate", val ? (val.length === 4 ? `${val}-01-01` : val) : "");
+                  }
+                }}
                 placeholder="2022"
                 disabled={form.currentlyStudying}
-                min="1980"
-                max={new Date().getFullYear() + 6}
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
               />
               <label className="flex items-center gap-1.5 mt-1.5 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={form.currentlyStudying}
-                  onChange={(e) => updateForm("currentlyStudying", e.target.checked)}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setForm((p) => ({ ...p, currentlyStudying: checked, ...(checked ? { endDate: "" } : {}) }));
+                  }}
                   className="accent-blue-600"
                 />
                 <span className="text-xs text-slate-500">Currently studying</span>
               </label>
             </div>
           </div>
+
+          {dateError && (
+            <p className="text-sm text-red-600">{dateError}</p>
+          )}
 
           <div className="flex gap-2 pt-1">
             <button

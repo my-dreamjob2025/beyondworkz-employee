@@ -1,15 +1,17 @@
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { authService } from "../../services/authService";
 import useAuth from "../../hooks/useAuth";
-import logo from "../../assets/logos/beyondworkzlogo.png";
+import AuthLeftPanel from "../../components/auth/AuthLeftPanel";
+import GoogleIcon from "../../assets/icons/common-icon/google-icon.svg";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { login } = useAuth();
 
-  const from = location.state?.from?.pathname || "/dashboard";
+  const from = location.state?.from?.pathname || searchParams.get("from") || "/dashboard";
 
   const [step, setStep] = useState("email");
   const [email, setEmail] = useState("");
@@ -17,6 +19,13 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
+
+  const urlError = searchParams.get("error");
+  const displayError = error || (step === "email" && urlError ? decodeURIComponent(urlError) : "");
+
+  const handleGoogleLogin = () => {
+    window.location.href = authService.getGoogleLoginUrl(from);
+  };
 
   const handleSendOTP = async (e) => {
     e.preventDefault();
@@ -50,7 +59,7 @@ const Login = () => {
 
     try {
       const data = await authService.verifyEmployeeOtp(email, otpString);
-      login(data.accessToken, data.user);
+      login(data.accessToken, data.refreshToken ?? null, data.user);
       // Redirect to profile completion if profile is significantly incomplete
       const isIncomplete =
         !data.user?.profileCompletion || data.user.profileCompletion < 40;
@@ -80,18 +89,26 @@ const Login = () => {
     }
   };
 
+  const cooldownRef = useRef(null);
+
   const startResendCooldown = (seconds) => {
+    if (cooldownRef.current) clearInterval(cooldownRef.current);
     setResendCooldown(seconds);
-    const interval = setInterval(() => {
+    cooldownRef.current = setInterval(() => {
       setResendCooldown((prev) => {
         if (prev <= 1) {
-          clearInterval(interval);
+          if (cooldownRef.current) clearInterval(cooldownRef.current);
+          cooldownRef.current = null;
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
   };
+
+  useEffect(() => () => {
+    if (cooldownRef.current) clearInterval(cooldownRef.current);
+  }, []);
 
   const handleOTPChange = (index, value) => {
     if (value.length > 1) value = value.slice(-1);
@@ -112,43 +129,26 @@ const Login = () => {
     }
   };
 
+  const handleOTPPaste = (e) => {
+    e.preventDefault();
+    const pasted = (e.clipboardData?.getData("text") || "").replace(/\D/g, "");
+    if (pasted.length === 0) return;
+    const digits = pasted.slice(0, 6).split("");
+    const newOtp = [...otp];
+    digits.forEach((d, i) => {
+      newOtp[i] = d;
+    });
+    setOtp(newOtp);
+    const nextIndex = Math.min(digits.length, 5);
+    document.getElementById(`otp-input-${nextIndex}`)?.focus();
+  };
+
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Brand Section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-blue-700 flex-col justify-between p-12 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute w-96 h-96 bg-white rounded-full -top-48 -left-48"></div>
-          <div className="absolute w-72 h-72 bg-white rounded-full bottom-0 right-0"></div>
-        </div>
-
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-12">
-            <img src={logo} alt="" className="h-10 w-10" />
-            <span className="text-2xl font-bold text-white">Beyond Workz</span>
-          </div>
-        </div>
-
-        <div className="relative z-10 flex flex-col items-center justify-center">
-          <div className="text-center">
-            <div className="text-6xl mb-6 opacity-80">👨‍💼</div>
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Find Work Beyond Limits
-            </h2>
-            <p className="text-blue-100 text-lg mb-8 max-w-sm">
-              Discover blue-collar and white-collar opportunities tailored to
-              your skill, experience, and ambition.
-            </p>
-            <div className="inline-flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-full font-semibold text-sm">
-              ⭐ Trusted by 50,000+ job seekers
-            </div>
-          </div>
-        </div>
-
-        <div className="relative z-10"></div>
-      </div>
+    <div className="min-h-screen flex w-full">
+      <AuthLeftPanel />
 
       {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 bg-white">
+      <div className="w-full lg:w-1/2 flex-shrink-0 flex items-center justify-center p-4 sm:p-8 bg-white">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
@@ -171,21 +171,22 @@ const Login = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
-                  className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1447E6] focus:border-transparent"
                   required
                 />
               </div>
 
-              {error && (
+              {displayError && (
                 <div className="rounded-lg bg-red-50 border border-red-200 p-4">
-                  <p className="text-sm text-red-700">{error}</p>
+                  <p className="text-sm text-red-700">{displayError}</p>
                 </div>
               )}
 
               <button
                 type="submit"
                 disabled={loading || !email}
-                className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 px-6 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 hover:opacity-90"
+                style={{ backgroundColor: "#1447E6" }}
               >
                 {loading ? (
                   <>
@@ -249,18 +250,10 @@ const Login = () => {
 
               <button
                 type="button"
+                onClick={handleGoogleLogin}
                 className="w-full py-3 px-6 flex items-center justify-center gap-2 border border-slate-300 text-slate-900 font-semibold rounded-lg hover:bg-slate-50 transition-colors"
               >
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                </svg>
+                <img src={GoogleIcon} alt="Google" className="w-5 h-5" />
                 Continue with Google
               </button>
 
@@ -293,7 +286,8 @@ const Login = () => {
                       value={digit}
                       onChange={(e) => handleOTPChange(index, e.target.value)}
                       onKeyDown={(e) => handleOTPKeyDown(index, e)}
-                      className="w-12 h-12 text-center text-2xl font-semibold border-2 border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600"
+                      onPaste={handleOTPPaste}
+                      className="w-12 h-12 text-center text-2xl font-semibold border-2 border-slate-300 rounded-lg focus:outline-none focus:border-[#1447E6] focus:ring-2 focus:ring-[#1447E6]"
                       placeholder="0"
                     />
                   ))}
@@ -304,7 +298,8 @@ const Login = () => {
                     type="button"
                     onClick={handleResendOTP}
                     disabled={resendCooldown > 0}
-                    className="text-sm text-blue-600 hover:underline disabled:text-slate-400 disabled:no-underline disabled:cursor-not-allowed"
+                    className="text-sm hover:underline disabled:text-slate-400 disabled:no-underline disabled:cursor-not-allowed"
+                    style={{ color: "#1447E6" }}
                   >
                     {resendCooldown > 0
                       ? `Resend OTP in ${resendCooldown}s`
@@ -323,7 +318,8 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={loading || otp.join("").length !== 6}
-                  className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-3 px-6 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 hover:opacity-90"
+                  style={{ backgroundColor: "#1447E6" }}
                 >
                   {loading ? (
                     <>

@@ -1,9 +1,22 @@
 import api from "./api";
 
+const getGoogleAuthUrl = (params = {}) => {
+  const base = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+  const url = new URL(`${base.replace(/\/$/, "")}/auth/google`);
+  Object.entries(params).forEach(([k, v]) => {
+    if (v != null && v !== "") url.searchParams.set(k, v);
+  });
+  return url.toString();
+};
+
 export const authService = {
+  getGoogleLoginUrl: (from = "/dashboard") =>
+    getGoogleAuthUrl({ intent: "login", from }),
+  getGoogleRegisterUrl: (employeeType = "whitecollar") =>
+    getGoogleAuthUrl({ intent: "register", employeeType }),
+
   /**
    * Employee Registration
-   * Sends registration details + triggers OTP email
    */
   registerEmployee: async ({ firstName, lastName, email, employeeType = "whitecollar" }) => {
     const { data } = await api.post("/auth/employee/register", {
@@ -16,8 +29,7 @@ export const authService = {
   },
 
   /**
-   * Employee Login
-   * Sends OTP to the registered email
+   * Employee Login - sends OTP
    */
   sendLoginOtp: async (email) => {
     const { data } = await api.post("/auth/employee/login", { email });
@@ -25,8 +37,7 @@ export const authService = {
   },
 
   /**
-   * Verify OTP (used for both registration and login)
-   * Returns { accessToken, user }
+   * Verify OTP - returns { accessToken, refreshToken, user }
    */
   verifyEmployeeOtp: async (email, otp) => {
     const { data } = await api.post("/auth/employee/verify-otp", { email, otp });
@@ -35,9 +46,11 @@ export const authService = {
 
   /**
    * Resend OTP
+   * @param {string} email
+   * @param {string} [type] - "login" | "signup" (default: "login")
    */
-  resendOtp: async (email) => {
-    const { data } = await api.post("/auth/resend-otp", { email });
+  resendOtp: async (email, type = "login") => {
+    const { data } = await api.post("/auth/resend-otp", { email, type });
     return data;
   },
 
@@ -66,22 +79,6 @@ export const authService = {
    */
   verifyEmployerOtp: async (email, otp) => {
     const { data } = await api.post("/auth/employer/verify-otp", { email, otp });
-    return data;
-  },
-
-  /**
-   * Logout — clears server session and cookies
-   */
-  logout: async (panel = "employee") => {
-    const { data } = await api.post("/auth/logout", { panel });
-    return data;
-  },
-
-  /**
-   * Silent token refresh
-   */
-  refreshToken: async (panel = "employee") => {
-    const { data } = await api.post("/auth/refresh", { panel });
     return data;
   },
 };

@@ -1,9 +1,10 @@
 import { useState } from "react";
 
-const SKILL_SUGGESTIONS = [
-  "JavaScript", "React", "Node.js", "Python", "Java", "SQL", "TypeScript",
-  "HTML/CSS", "AWS", "Docker", "Git", "Communication", "Project Management",
-  "Data Analysis", "Excel", "Figma", "REST API", "MongoDB", "Agile",
+const BLUE_COLLAR_SKILL_SUGGESTIONS = [
+  "Driving", "Vehicle washing", "Physical work", "Communication", "Cleaning",
+  "Maintenance", "Delivery", "Time management", "Customer service", "Team work",
+  "Safety awareness", "Manual labour", "Loading/Unloading", "Housekeeping",
+  "Security", "Warehouse", "Packing", "Quality check",
 ];
 
 const emptyExp = () => ({
@@ -19,7 +20,7 @@ const emptyExp = () => ({
   skillsUsed: [],
 });
 
-const ExperienceStep = ({ data, onChange }) => {
+const BlueCollarExperienceStep = ({ data, onChange }) => {
   const experience = data.experience || [];
   const [editing, setEditing] = useState(experience.length === 0 ? 0 : null);
   const [form, setForm] = useState(emptyExp());
@@ -92,8 +93,8 @@ const ExperienceStep = ({ data, onChange }) => {
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-bold text-slate-900">Work Experience</h2>
-        <p className="text-sm text-slate-500 mt-1">Add your professional experience.</p>
+        <h2 className="text-xl font-bold text-slate-900">Work History</h2>
+        <p className="text-sm text-slate-500 mt-1">Add your previous jobs and roles.</p>
       </div>
 
       {experience.map((exp, idx) => (
@@ -120,7 +121,7 @@ const ExperienceStep = ({ data, onChange }) => {
       {editing !== null ? (
         <div className="p-4 rounded-xl border-2 border-blue-200 bg-blue-50/50 space-y-4">
           <p className="text-sm font-semibold text-slate-800">
-            {editing === experience.length ? "Add Experience" : "Edit Experience"}
+            {editing === experience.length ? "Add Work History" : "Edit Work History"}
           </p>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -129,17 +130,17 @@ const ExperienceStep = ({ data, onChange }) => {
                 type="text"
                 value={form.jobTitle}
                 onChange={(e) => updateForm("jobTitle", e.target.value)}
-                placeholder="e.g. Senior Developer"
+                placeholder="e.g. Vehicle Washer, Delivery Driver"
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Company *</label>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Company / Employer *</label>
               <input
                 type="text"
                 value={form.company}
                 onChange={(e) => updateForm("company", e.target.value)}
-                placeholder="e.g. Tech Corp"
+                placeholder="e.g. ABC Car Wash, XYZ Logistics"
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -165,7 +166,7 @@ const ExperienceStep = ({ data, onChange }) => {
               />
               <label className="flex items-center gap-1.5 mt-1.5 cursor-pointer">
                 <input type="checkbox" checked={form.current} onChange={(e) => updateForm("current", e.target.checked)} className="accent-blue-600" />
-                <span className="text-xs text-slate-500">Currently working</span>
+                <span className="text-xs text-slate-500">Currently working here</span>
               </label>
             </div>
           </div>
@@ -175,7 +176,7 @@ const ExperienceStep = ({ data, onChange }) => {
               type="text"
               value={form.location}
               onChange={(e) => updateForm("location", e.target.value)}
-              placeholder="e.g. Mumbai"
+              placeholder="e.g. Mumbai, Nagpur"
               className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -184,7 +185,7 @@ const ExperienceStep = ({ data, onChange }) => {
             <textarea
               value={form.description}
               onChange={(e) => updateForm("description", e.target.value)}
-              placeholder="Describe your responsibilities..."
+              placeholder="Describe your role and duties..."
               rows={3}
               maxLength={1000}
               className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -197,19 +198,19 @@ const ExperienceStep = ({ data, onChange }) => {
                 type="text"
                 value={form.noticePeriod}
                 onChange={(e) => updateForm("noticePeriod", e.target.value)}
-                placeholder="e.g. 30 days, Immediate"
+                placeholder="e.g. Immediate, Same day"
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Current CTC (LPA)</label>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Monthly Salary (₹)</label>
               <input
                 type="number"
                 value={form.currentCTC}
                 onChange={(e) => updateForm("currentCTC", e.target.value)}
-                placeholder="e.g. 8.5"
+                placeholder="e.g. 15000"
                 min={0}
-                step={0.1}
+                step={100}
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -228,7 +229,7 @@ const ExperienceStep = ({ data, onChange }) => {
                     addSkillUsed(skillInput);
                   }
                 }}
-                placeholder="e.g. React, Node.js"
+                placeholder="e.g. Driving, Vehicle washing"
                 className="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -245,13 +246,13 @@ const ExperienceStep = ({ data, onChange }) => {
                 {skillsUsed.map((s, idx) => (
                   <span
                     key={`${s}-${idx}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 text-white text-sm rounded-full"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-full"
                   >
                     {s}
                     <button
                       type="button"
                       onClick={() => removeSkillUsed(s)}
-                      className="hover:text-slate-300 transition-colors leading-none text-lg"
+                      className="hover:text-blue-200 transition-colors leading-none text-lg"
                       aria-label={`Remove ${s}`}
                     >
                       ×
@@ -261,7 +262,7 @@ const ExperienceStep = ({ data, onChange }) => {
               </div>
             )}
             <div className="flex flex-wrap gap-2 mt-2">
-              {SKILL_SUGGESTIONS.filter((s) => !skillsUsed.some((sk) => sk.toLowerCase() === s.toLowerCase())).map(
+              {BLUE_COLLAR_SKILL_SUGGESTIONS.filter((s) => !skillsUsed.some((sk) => sk.toLowerCase() === s.toLowerCase())).map(
                 (s) => (
                   <button
                     key={s}
@@ -295,11 +296,11 @@ const ExperienceStep = ({ data, onChange }) => {
           onClick={() => startEdit(experience.length)}
           className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm text-slate-500 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50"
         >
-          + Add Experience
+          + Add Work History
         </button>
       )}
     </div>
   );
 };
 
-export default ExperienceStep;
+export default BlueCollarExperienceStep;
