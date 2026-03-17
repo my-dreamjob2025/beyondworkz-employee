@@ -28,7 +28,7 @@ const notifications = [
 
 const NotificationDropdown = () => {
   return (
-    <div className="absolute right-0 mt-3 w-[360px] bg-white border border-[#ffffff]  rounded-xl shadow-lg overflow-hidden">
+    <div className="absolute right-0 mt-3 w-[calc(100vw-2rem)] max-w-[360px] min-w-0 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3 border-b">
         <h3 className="font-semibold text-slate-800">Notifications</h3>

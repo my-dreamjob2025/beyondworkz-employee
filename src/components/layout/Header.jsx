@@ -8,7 +8,7 @@ import downarrow from "../../assets/icons/layout/down-arrow.svg";
 
 import NotificationDropdown from "./NotificationDropdown";
 
-const Header = () => {
+const Header = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const { user: currentUser, logout } = useAuth();
 
@@ -21,18 +21,29 @@ const Header = () => {
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
-      <div className="flex items-center justify-between px-6 py-3">
-        {/* LEFT */}
-        <div className="flex items-center gap-3">
-          <img src={logo} alt="Beyond Workz" className="h-9 w-auto max-w-[140px] object-contain" />
-
-          <span className="text-lg font-semibold text-blue-600">
-            Beyond Workz
-          </span>
+      <div className="flex items-center justify-between gap-2 px-4 sm:px-6 py-3">
+        {/* LEFT: Hamburger + Logo */}
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <button
+            type="button"
+            onClick={onMenuClick}
+            className="p-2 -ml-2 rounded-lg hover:bg-slate-100 lg:hidden flex-shrink-0"
+            aria-label="Open menu"
+          >
+            <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <button type="button" onClick={() => navigate("/dashboard")} className="flex items-center gap-2 min-w-0">
+            <img src={logo} alt="Beyond Workz" className="h-8 sm:h-9 w-auto max-w-[120px] sm:max-w-[140px] object-contain flex-shrink-0" />
+            <span className="text-base sm:text-lg font-semibold text-blue-600 hidden sm:inline truncate">
+              Beyond Workz
+            </span>
+          </button>
         </div>
 
-        {/* SEARCH */}
-        <div className="relative w-[420px]">
+        {/* SEARCH - hidden on small screens */}
+        <div className="relative hidden md:block flex-1 max-w-[280px] lg:max-w-[420px] mx-2">
           <svg
             className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
             fill="none"
@@ -55,7 +66,7 @@ const Header = () => {
         </div>
 
         {/* RIGHT */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-2 sm:gap-4 lg:gap-5 flex-shrink-0">
           {/* Notification */}
           <div className="relative">
             <button
@@ -70,30 +81,26 @@ const Header = () => {
             {showNotifications && <NotificationDropdown />}
           </div>
 
-          {/* Divider */}
-          <div className="h-6 w-px bg-slate-200"></div>
+          {/* Divider - hidden on small */}
+          <div className="h-6 w-px bg-slate-200 hidden sm:block"></div>
 
           {/* Profile */}
-          <div
-            className="flex items-center gap-3 cursor-pointer"
-            onClick={() => {
-              navigate("/dashboard/profile");
-            }}
+          <button
+            type="button"
+            className="flex items-center gap-2 sm:gap-3 cursor-pointer min-w-0"
+            onClick={() => navigate("/dashboard/profile")}
           >
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
-              {currentUser?.firstName?.[0]}
+            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+              {currentUser?.firstName?.[0] || "U"}
             </div>
-
-            <div className="leading-tight">
-              <p className="text-sm font-medium text-slate-800">
+            <div className="leading-tight hidden sm:block min-w-0">
+              <p className="text-sm font-medium text-slate-800 truncate">
                 {currentUser?.firstName} {currentUser?.lastName}
               </p>
-
               <p className="text-xs text-slate-500">Frontend Developer</p>
             </div>
-
-            <img src={downarrow} alt="down arrow" className="w-3 h-3" />
-          </div>
+            <img src={downarrow} alt="" className="w-3 h-3 hidden sm:block flex-shrink-0" />
+          </button>
         </div>
       </div>
     </header>

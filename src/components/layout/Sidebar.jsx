@@ -11,7 +11,7 @@ import messageIcon from "../../assets/icons/layout/messages.svg";
 import alertIcon from "../../assets/icons/layout/notification.svg";
 import settingsIcon from "../../assets/icons/layout/setting.svg";
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen = false, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
@@ -43,8 +43,16 @@ const Sidebar = () => {
 
   const isActive = (path) => location.pathname === path;
 
+  const handleNav = (path) => {
+    navigate(path);
+    onClose?.();
+  };
+
   return (
-    <aside className="w-60 bg-white border-r border-slate-200 min-h-[calc(100vh-64px)]">
+    <aside
+      className={`fixed lg:static top-14 lg:top-0 bottom-0 left-0 z-50 w-60 bg-white border-r border-slate-200 lg:min-h-0 transform transition-transform duration-200 ease-out lg:transform-none
+        ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+    >
       <nav className="p-4 space-y-1">
         {navItems.map((item) => {
           const active = isActive(item.path);
@@ -52,7 +60,7 @@ const Sidebar = () => {
           return (
             <button
               key={item.path}
-              onClick={() => navigate(item.path)}
+              onClick={() => handleNav(item.path)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition
               ${
                 active
@@ -86,7 +94,7 @@ const Sidebar = () => {
           return (
             <button
               key={item.path}
-              onClick={() => navigate(item.path)}
+              onClick={() => handleNav(item.path)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition
               ${
                 active

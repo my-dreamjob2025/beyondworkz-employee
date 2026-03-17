@@ -157,7 +157,7 @@ const Register = () => {
           {/* Details Step */}
           {step === "details" && (
             <form onSubmit={handleSendDetailsAndOTP} className="space-y-5">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     First Name
@@ -206,7 +206,7 @@ const Register = () => {
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   I am looking for
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <label
                     className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
                       formData.employeeType === "whitecollar"

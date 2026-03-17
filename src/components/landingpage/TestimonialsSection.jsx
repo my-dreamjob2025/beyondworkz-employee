@@ -36,49 +36,44 @@ const TestimonialSection = () => {
     setActive((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
   };
 
+  const slideOffset = 320;
+
   return (
-    <section className="w-full flex justify-center bg-white py-24">
-      <div className="w-[1440px] flex flex-col items-center">
+    <section className="w-full flex justify-center bg-white py-12 sm:py-16 lg:py-24 overflow-hidden">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center">
         {/* Slider Container */}
-        <div className="relative flex items-center justify-center h-[420px]">
+        <div className="relative flex items-center justify-center min-h-[320px] sm:min-h-[380px] lg:min-h-[420px] w-full">
           {testimonials.map((item, index) => {
             const isActive = index === active;
 
             return (
               <div
                 key={item.id}
-                className={`absolute transition-all duration-500 ease-in-out
-                  ${
-                    isActive
-                      ? "z-20 scale-100 opacity-100"
-                      : "z-10 scale-90 opacity-40"
-                  }`}
+                className={`absolute transition-all duration-500 ease-in-out w-[90vw] max-w-[800px]
+                  ${isActive ? "z-20 scale-100 opacity-100" : "z-10 scale-90 opacity-40"}`}
                 style={{
-                  transform: `translateX(${(index - active) * 420}px)`,
+                  transform: `translateX(${(index - active) * slideOffset}px)`,
                 }}
               >
                 <div
-                  className="w-[800px] h-[439px]
-                  rounded-[24px] border border-slate-200
+                  className="w-full min-h-[320px] sm:min-h-[380px] lg:min-h-[439px]
+                  rounded-2xl lg:rounded-[24px] border border-slate-200
                   bg-white shadow-lg
-                  px-[48px] py-[56px]
-                  flex flex-col gap-[32px]
+                  px-6 sm:px-8 lg:px-12 py-8 sm:py-10 lg:py-14
+                  flex flex-col gap-6 sm:gap-8
                   text-center"
                 >
                   {/* Stars */}
-                  <div className="text-yellow-400 text-lg">⭐⭐⭐⭐⭐</div>
+                  <div className="text-yellow-400 text-base sm:text-lg">⭐⭐⭐⭐⭐</div>
 
                   {/* Testimonial Text */}
-                  <p className="font-['Inter'] font-medium text-[24px] leading-[36px] tracking-[-0.24px] text-center text-slate-700 max-w-[702px] mx-auto text-[#0F172A]">
+                  <p className="font-['Inter'] font-medium text-base sm:text-lg lg:text-[24px] leading-relaxed tracking-[-0.24px] text-center text-slate-700 max-w-full mx-auto text-[#0F172A]">
                     "{item.text}"
                   </p>
 
                   {/* Profile Section */}
                   <div
-                    className="flex flex-col items-center
-                    w-[702px] h-[133px]
-                     pt-[8px] gap-[16px]
-                       mx-auto"
+                    className="flex flex-col items-center pt-2 gap-4 mx-auto"
                   >
                     <img
                       src={item.image}
@@ -96,8 +91,8 @@ const TestimonialSection = () => {
           })}
         </div>
 
-        {/*  Controller  */}
-        <div className="mt-12 flex justify-center">
+        {/* Controller */}
+        <div className="mt-8 sm:mt-12 flex justify-center">
           <div
             className="w-[184px] h-[40px] 
             bg-[#FFFFFF] 

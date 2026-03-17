@@ -77,6 +77,11 @@
   font-family: var(--font-family-inter);
 }
 
+html {
+  /* Prevent horizontal overflow on mobile */
+  overflow-x: hidden;
+}
+
 html,
 body {
   margin: 0;

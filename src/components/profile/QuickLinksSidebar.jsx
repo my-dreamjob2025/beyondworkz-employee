@@ -43,11 +43,11 @@ const QuickLinksSidebar = ({
   };
 
   return (
-    <aside className="w-56 shrink-0">
+    <aside className="w-full lg:w-56 shrink-0">
       <h3 className="font-bold text-slate-900 text-sm mb-4">Quick links</h3>
-      <nav className="space-y-0.5">
+      <nav className="flex flex-wrap gap-x-4 gap-y-1 lg:flex-col lg:flex-nowrap lg:space-y-0.5">
         {links.map((link) => (
-          <div key={link.id} className="flex items-center justify-between group">
+          <div key={link.id} className="flex items-center justify-between group w-fit lg:w-full">
             <button
               type="button"
               onClick={() => handleLabelClick(link)}

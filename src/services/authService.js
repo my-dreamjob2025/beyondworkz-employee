@@ -18,7 +18,12 @@ export const authService = {
   /**
    * Employee Registration
    */
-  registerEmployee: async ({ firstName, lastName, email, employeeType = "whitecollar" }) => {
+  registerEmployee: async ({
+    firstName,
+    lastName,
+    email,
+    employeeType = "whitecollar",
+  }) => {
     const { data } = await api.post("/auth/employee/register", {
       firstName,
       lastName,
@@ -40,7 +45,10 @@ export const authService = {
    * Verify OTP - returns { accessToken, refreshToken, user }
    */
   verifyEmployeeOtp: async (email, otp) => {
-    const { data } = await api.post("/auth/employee/verify-otp", { email, otp });
+    const { data } = await api.post("/auth/employee/verify-otp", {
+      email,
+      otp,
+    });
     return data;
   },
 
@@ -78,7 +86,10 @@ export const authService = {
    * Verify Employer OTP
    */
   verifyEmployerOtp: async (email, otp) => {
-    const { data } = await api.post("/auth/employer/verify-otp", { email, otp });
+    const { data } = await api.post("/auth/employer/verify-otp", {
+      email,
+      otp,
+    });
     return data;
   },
 };

@@ -83,7 +83,7 @@ const Profile = () => {
       />
 
       {/* Main layout: Quick links (left) + Content (right) */}
-      <div className="flex gap-8">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         {/* Quick links sidebar */}
         <QuickLinksSidebar
           employeeType={user?.employeeType}

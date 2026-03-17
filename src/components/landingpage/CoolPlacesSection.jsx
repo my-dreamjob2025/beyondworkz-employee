@@ -24,21 +24,21 @@ const CoolPlacesSection = () => {
           "linear-gradient(0deg, #F1F5F9 0%, #2563EB 50%, #F0F4F9 100%)",
       }}
     >
-      <div className="w-[1440px] px-6 pt-20 flex flex-col">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 lg:pt-20 flex flex-col">
         {/* Heading */}
         <div className="text-center">
-          <h2 className="font-['Inter'] font-bold text-[32px] leading-[20px] tracking-[0%] uppercase text-[#191500]">
+          <h2 className="font-['Inter'] font-bold text-xl sm:text-2xl lg:text-[32px] leading-tight tracking-[0%] uppercase text-[#191500]">
             Cool Places to Work
           </h2>
         </div>
 
         {/* Logos */}
-        <div className="mt-12 flex flex-wrap justify-center gap-8">
+        <div className="mt-8 sm:mt-12 flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-8">
           {companyLogos.map((logo, index) => (
             <div
               key={index}
-              className="w-[168px] h-[64px] flex items-center justify-center
-              bg-white rounded-[16px] shadow-md"
+              className="w-28 sm:w-36 lg:w-[168px] h-12 sm:h-14 lg:h-[64px] flex items-center justify-center
+              bg-white rounded-xl lg:rounded-[16px] shadow-md flex-shrink-0"
             >
               <img
                 src={logo}
@@ -50,11 +50,11 @@ const CoolPlacesSection = () => {
         </div>
 
         {/* Push Image to Bottom */}
-        <div className="mt-8 flex justify-center">
+        <div className="mt-6 sm:mt-8 flex justify-center">
           <img
             src={coolPlaceImg}
             alt="Professional at a cool workplace"
-            className="w-[491px] object-contain"
+            className="w-full max-w-[280px] sm:max-w-[360px] lg:max-w-[491px] object-contain"
           />
         </div>
       </div>

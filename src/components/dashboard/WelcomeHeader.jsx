@@ -6,11 +6,11 @@ const WelcomeHeader = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-slate-900">
+      <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
         Welcome back, {firstName}!
       </h1>
 
-      <p className="text-slate-500 mt-1">
+      <p className="text-slate-500 mt-1 text-sm sm:text-base">
         Here is what is happening with your job search today.
       </p>
     </div>
