@@ -54,6 +54,7 @@ const CompleteProfile = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [showSkipModal, setShowSkipModal] = useState(false);
+  const [hasUnsavedExperienceDraft, setHasUnsavedExperienceDraft] = useState(false);
 
   const [formData, setFormData] = useState({
     employeeType: user?.employeeType || null,
@@ -132,6 +133,10 @@ const CompleteProfile = () => {
   };
 
   const handleNext = async () => {
+    if (stepId === "experience" && hasUnsavedExperienceDraft) {
+      setError("Please click Save in Experience section before continuing.");
+      return;
+    }
     if (stepId === "employeeType") {
       if (!formData.employeeType) {
         setError("Please select a job type to continue.");
@@ -187,7 +192,7 @@ const CompleteProfile = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col">
       {/* Top bar */}
-      <div className="bg-white/95 backdrop-blur-sm border-b border-slate-200/80 px-6 py-3.5 flex items-center justify-between sticky top-0 z-10">
+      <div className="bg-white/95 backdrop-blur-sm border-b border-slate-200/80 px-4 sm:px-6 py-3.5 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-3">
           <img src={logo} alt="Beyond Workz" className="w-9 h-9" />
           <span className="font-semibold text-slate-800 text-lg">Beyond Workz</span>
@@ -201,7 +206,7 @@ const CompleteProfile = () => {
         </button>
       </div>
 
-      <div className="flex-1 max-w-2xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-10">
+      <div className="flex-1 max-w-2xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 lg:py-10">
         {/* Heading */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-slate-100 text-slate-600 text-xs font-medium px-3.5 py-1.5 rounded-full mb-4 tracking-wide uppercase">
@@ -238,13 +243,13 @@ const CompleteProfile = () => {
         </div>
 
         {/* Step indicators - horizontal pills with icons */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-1 mb-8">
+        <div className="flex items-center justify-center gap-2 sm:gap-1 mb-8 overflow-x-auto pb-1 sm:overflow-visible sm:flex-wrap">
           {steps.map((step, idx) => {
             const StepIcon = step.Icon;
             const isComplete = idx < currentStep;
             const isActive = idx === currentStep;
             return (
-              <div key={step.id} className="flex items-center">
+              <div key={step.id} className="flex items-center flex-shrink-0">
                 <div
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                     isComplete
@@ -274,7 +279,7 @@ const CompleteProfile = () => {
         </div>
 
         {/* Step content card */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-lg shadow-slate-200/50 p-6 sm:p-8">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-lg shadow-slate-200/50 p-4 sm:p-6 lg:p-8">
           {stepId === "employeeType" && (
             <EmployeeTypeStep
               selectedType={formData.employeeType}
@@ -293,9 +298,17 @@ const CompleteProfile = () => {
           )}
           {stepId === "experience" && (
             employeeType === "bluecollar" ? (
-              <BlueCollarExperienceStep data={formData} onChange={handleChange} />
+              <BlueCollarExperienceStep
+                data={formData}
+                onChange={handleChange}
+                onDraftStateChange={setHasUnsavedExperienceDraft}
+              />
             ) : (
-              <ExperienceStep data={formData} onChange={handleChange} />
+              <ExperienceStep
+                data={formData}
+                onChange={handleChange}
+                onDraftStateChange={setHasUnsavedExperienceDraft}
+              />
             )
           )}
           {stepId === "skills" && (

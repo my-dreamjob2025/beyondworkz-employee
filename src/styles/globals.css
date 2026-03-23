@@ -90,10 +90,16 @@ body {
   color: var(--color-neutral-900);
 }
 
-/* Button Reset */
+/* Button Base */
 button {
   font-family: var(--font-family-inter);
   cursor: pointer;
+}
+
+/* Make all employee panel buttons pill-shaped */
+button,
+button[class*="rounded"] {
+  border-radius: 555px;
 }
 
 /* Link Reset */

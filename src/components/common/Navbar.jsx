@@ -3,14 +3,21 @@ import { Link } from "react-router-dom";
 import logo from "../../assets/logos/beyondworkzlogo.png";
 import arrowIcon from "../../assets/icons/landing-page/arrow.svg";
 
+const RECRUITERS_URL = "http://employer.beyondworkz.com/";
+
 const NAV_LINKS = [
   { label: "Find Jobs", href: "/jobs" },
   { label: "Career Resources", href: "#" },
-  { label: "For Employers", href: "#" },
+  { label: "For Employers", href: RECRUITERS_URL },
 ];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleRecruitersClick = () => {
+    // External redirect (same tab) for recruiters/employers.
+    window.location.href = RECRUITERS_URL;
+  };
 
   return (
     <nav
@@ -40,9 +47,15 @@ const Navbar = () => {
         >
           {NAV_LINKS.map((link) => (
             <li key={link.label}>
-              <Link to={link.href} className="transition hover:text-black">
-                {link.label}
-              </Link>
+              {link.href.startsWith("http") ? (
+                <a href={link.href} className="transition hover:text-black">
+                  {link.label}
+                </a>
+              ) : (
+                <Link to={link.href} className="transition hover:text-black">
+                  {link.label}
+                </Link>
+              )}
             </li>
           ))}
         </ul>
@@ -81,7 +94,12 @@ const Navbar = () => {
           />
 
           {/* Recruiters */}
-          <button className="inline-flex items-center gap-2 rounded-full border border-[#E8E8E6] bg-[#F1F1F1] px-5 py-2 text-sm font-medium text-[#475569] transition hover:bg-[#E8E8E6]">
+          <button
+            type="button"
+            onClick={handleRecruitersClick}
+            className="inline-flex items-center gap-2 rounded-full border border-[#E8E8E6] bg-[#F1F1F1] px-5 py-2 text-sm font-medium text-[#475569] transition hover:bg-[#E8E8E6]"
+            aria-label="For Recruiters - go to employer site"
+          >
             For Recruiters
             <img src={arrowIcon} alt="" className="h-4 w-4" />
           </button>
@@ -105,14 +123,17 @@ const Navbar = () => {
         >
           <div className="space-y-4 px-6 py-5">
             {NAV_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                to={link.href}
-                className="block text-sm font-medium"
-                style={{ color: "var(--color-neutral-600)" }}
-              >
-                {link.label}
-              </Link>
+              <div key={link.label} style={{ color: "var(--color-neutral-600)" }}>
+                {link.href.startsWith("http") ? (
+                  <a href={link.href} className="block w-full text-sm font-medium">
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link to={link.href} className="block w-full text-sm font-medium">
+                    {link.label}
+                  </Link>
+                )}
+              </div>
             ))}
 
             <div className="pt-4 space-y-3">
@@ -141,7 +162,12 @@ const Navbar = () => {
               </Link>
 
               {/* Recruiters */}
-              <button className="inline-flex items-center gap-2 rounded-full border border-[#E8E8E6] bg-[#F1F1F1] px-5 py-2 text-sm font-medium text-[#475569] transition hover:bg-[#E8E8E6]">
+              <button
+                type="button"
+                onClick={handleRecruitersClick}
+                className="inline-flex items-center gap-2 rounded-full border border-[#E8E8E6] bg-[#F1F1F1] px-5 py-2 text-sm font-medium text-[#475569] transition hover:bg-[#E8E8E6]"
+                aria-label="For Recruiters - go to employer site"
+              >
                 For Recruiters
                 <img src={arrowIcon} alt="" className="h-4 w-4" />
               </button>

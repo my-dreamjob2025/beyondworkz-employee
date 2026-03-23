@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const SKILL_SUGGESTIONS = [
   "JavaScript", "React", "Node.js", "Python", "Java", "SQL", "TypeScript",
@@ -19,10 +19,25 @@ const emptyExp = () => ({
   skillsUsed: [],
 });
 
-const ExperienceStep = ({ data, onChange }) => {
+const normalizeDraft = (item) => ({
+  ...item,
+  jobTitle: String(item.jobTitle || "").trim(),
+  company: String(item.company || "").trim(),
+  dateOfJoining: item.dateOfJoining || "",
+  relievingDate: item.relievingDate || "",
+  current: !!item.current,
+  location: String(item.location || "").trim(),
+  description: String(item.description || "").trim(),
+  noticePeriod: String(item.noticePeriod || "").trim(),
+  currentCTC: item.currentCTC === "" || item.currentCTC == null ? "" : String(item.currentCTC),
+  skillsUsed: Array.isArray(item.skillsUsed) ? item.skillsUsed.map((s) => String(s).trim()).filter(Boolean) : [],
+});
+
+const ExperienceStep = ({ data, onChange, onDraftStateChange }) => {
   const experience = data.experience || [];
   const [editing, setEditing] = useState(experience.length === 0 ? 0 : null);
   const [form, setForm] = useState(emptyExp());
+  const [baseline, setBaseline] = useState(emptyExp());
 
   const updateForm = (field, value) => setForm((p) => ({ ...p, [field]: value }));
 
@@ -51,6 +66,7 @@ const ExperienceStep = ({ data, onChange }) => {
     }
     onChange("experience", updated);
     setForm(emptyExp());
+    setBaseline(emptyExp());
     setEditing(null);
   };
 
@@ -66,17 +82,28 @@ const ExperienceStep = ({ data, onChange }) => {
     const skillsArr = Array.isArray(item.skillsUsed)
       ? item.skillsUsed
       : (typeof item.skillsUsed === "string" ? item.skillsUsed.split(",").map((s) => s.trim()).filter(Boolean) : []);
-    setForm({
+    const nextForm = {
       ...emptyExp(),
       ...item,
       dateOfJoining: item.dateOfJoining ? formatDate(item.dateOfJoining) : "",
       relievingDate: item.relievingDate ? formatDate(item.relievingDate) : "",
       currentCTC: item.currentCTC ?? "",
       skillsUsed: skillsArr,
-    });
+    };
+    setForm(nextForm);
+    setBaseline(nextForm);
     setSkillInput("");
     setEditing(idx);
   };
+
+  const hasUnsavedChanges = useMemo(
+    () => editing !== null && JSON.stringify(normalizeDraft(form)) !== JSON.stringify(normalizeDraft(baseline)),
+    [editing, form, baseline]
+  );
+
+  useEffect(() => {
+    onDraftStateChange?.(hasUnsavedChanges);
+  }, [hasUnsavedChanges, onDraftStateChange]);
 
   const addSkillUsed = (name) => {
     const trimmed = (typeof name === "string" ? name : skillInput).trim();
@@ -284,7 +311,15 @@ const ExperienceStep = ({ data, onChange }) => {
             >
               Save
             </button>
-            <button type="button" onClick={() => setEditing(null)} className="px-4 py-2 border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50">
+            <button
+              type="button"
+              onClick={() => {
+                setEditing(null);
+                setForm(emptyExp());
+                setBaseline(emptyExp());
+              }}
+              className="px-4 py-2 border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50"
+            >
               Cancel
             </button>
           </div>

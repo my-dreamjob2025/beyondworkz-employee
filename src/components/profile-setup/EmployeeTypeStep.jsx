@@ -43,13 +43,15 @@ const EmployeeTypeStep = ({ selectedType, onChange }) => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-slate-900">What kind of job are you looking for?</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+          What kind of job are you looking for?
+        </h2>
         <p className="text-sm text-slate-500 mt-1">
           Choose the category that best matches your career goals. This helps us recommend the right jobs for you.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {options.map((opt) => {
           const isSelected = selectedType === opt.id;
           const OptIcon = opt.Icon;
@@ -58,7 +60,9 @@ const EmployeeTypeStep = ({ selectedType, onChange }) => {
               key={opt.id}
               type="button"
               onClick={() => onChange("employeeType", opt.id)}
-              className={`relative text-left p-6 rounded-xl border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+              // `globals.css` forces a pill radius on all buttons; override to keep card corners correct.
+              style={{ borderRadius: "16px" }}
+              className={`relative text-left p-5 sm:p-6 rounded-xl border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full min-h-[240px] sm:min-h-[280px] flex flex-col ${
                 isSelected
                   ? "border-blue-600 bg-blue-50/60 shadow-md shadow-blue-600/10"
                   : "border-slate-200 hover:border-slate-300 hover:bg-slate-50/50 bg-white"
@@ -66,7 +70,7 @@ const EmployeeTypeStep = ({ selectedType, onChange }) => {
             >
               <div className="absolute top-4 right-4">
                 {isSelected ? (
-                  <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center">
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-600 flex items-center justify-center">
                     <CheckSvg className="w-4 h-4 text-white" />
                   </div>
                 ) : (
@@ -74,16 +78,18 @@ const EmployeeTypeStep = ({ selectedType, onChange }) => {
                 )}
               </div>
 
-              <div className={`w-14 h-14 rounded-xl ${opt.iconBg} flex items-center justify-center mb-4`}>
-                <OptIcon className={`w-7 h-7 ${opt.iconColor}`} />
+              <div
+                className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl ${opt.iconBg} flex items-center justify-center mb-4`}
+              >
+                <OptIcon className={`w-6 sm:w-7 h-6 sm:h-7 ${opt.iconColor}`} />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-1.5 text-base">{opt.title}</h3>
-              <p className="text-sm text-slate-600 mb-4 leading-relaxed">{opt.subtitle}</p>
-              <div className="flex flex-wrap gap-2">
+              <h3 className="font-semibold text-slate-900 mb-1.5 text-base sm:text-base">{opt.title}</h3>
+              <p className="text-sm text-slate-600 mb-3 sm:mb-4 leading-relaxed">{opt.subtitle}</p>
+              <div className="flex flex-wrap gap-2 mt-auto">
                 {opt.tags.map((tag) => (
                   <span
                     key={tag}
-                    className={`inline-block px-2.5 py-1 rounded-lg text-xs font-medium ${
+                    className={`inline-block px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-medium ${
                       isSelected ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-600"
                     }`}
                   >
