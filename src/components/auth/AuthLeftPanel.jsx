@@ -1,5 +1,6 @@
-import logo from "../../assets/logos/beyondworkzlogo.png";
 import userIllustration from "../../assets/user-illustration.png";
+import brandLogo from "../../assets/logos/beyond-workz-logo.png";
+import { BrandWordmark } from "../brand/BrandMark";
 
 const AuthLeftPanel = () => {
   return (
@@ -148,26 +149,13 @@ const AuthLeftPanel = () => {
 
       {/* ── Main content column ── */}
       <div className="relative z-10 flex flex-col min-h-screen w-full px-10 py-8">
-        {/* Logo / brand */}
-        <header className="flex items-center gap-3 flex-shrink-0">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden shadow-md"
-            style={{ backgroundColor: "#ffffff" }}
-          >
-            <img
-              src={logo}
-              alt="BW"
-              className="w-8 h-8 object-contain"
-              onError={(e) => {
-                e.target.style.display = "none";
-                e.target.parentElement.innerHTML =
-                  '<span style="color:#1447E6;font-weight:700;font-size:14px;">BW</span>';
-              }}
-            />
-          </div>
-          <span className="text-xl font-bold tracking-tight text-white">
-            Beyond Workz
-          </span>
+        <header className="flex flex-shrink-0 flex-wrap items-center gap-3">
+          <img
+            src={brandLogo}
+            alt=""
+            className="h-11 w-auto max-w-[100px] shrink-0 object-contain object-left brightness-0 invert sm:h-12 sm:max-w-[120px]"
+          />
+          <BrandWordmark variant="onBlue" />
         </header>
 
         {/* Illustration */}

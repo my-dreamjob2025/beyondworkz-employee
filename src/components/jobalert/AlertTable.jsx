@@ -1,36 +1,3 @@
-import AlertRow from "./AlertRow";
-
-const alerts = [
-  {
-    role: "Product Designer",
-    location: "San Francisco, CA",
-    experience: "3-5 Years",
-    frequency: "Daily",
-    enabled: true,
-  },
-  {
-    role: "Frontend Developer",
-    location: "Remote",
-    experience: "2-4 Years",
-    frequency: "Instant",
-    enabled: false,
-  },
-  {
-    role: "Senior Marketing Manager",
-    location: "New York, NY",
-    experience: "5+ Years",
-    frequency: "Weekly",
-    enabled: true,
-  },
-  {
-    role: "Data Scientist",
-    location: "Chicago, IL",
-    experience: "3-5 Years",
-    frequency: "Daily",
-    enabled: true,
-  },
-];
-
 const AlertTable = () => {
   return (
     <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
@@ -47,9 +14,11 @@ const AlertTable = () => {
         </thead>
 
         <tbody>
-          {alerts.map((alert, index) => (
-            <AlertRow key={index} alert={alert} />
-          ))}
+          <tr>
+            <td colSpan={6} className="p-8 text-center text-slate-500">
+              No job alerts configured. This table will list your alerts when the feature is available.
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

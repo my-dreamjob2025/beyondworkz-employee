@@ -1,4 +1,5 @@
-import FooterLogo from "../../assets/logos/beyondworkzlogo.png";
+import brandLogo from "../../assets/logos/beyond-workz-logo.png";
+import { BrandWordmark } from "../brand/BrandMark";
 import LinkedinIcon from "../../assets/icons/common-icon/linkedin.svg";
 import TwitterIcon from "../../assets/icons/common-icon/twitter.svg";
 import FacebookIcon from "../../assets/icons/common-icon/facebook.svg";
@@ -32,11 +33,13 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand Section */}
           <div className="space-y-5">
-            <div className="flex items-center gap-3">
-              <img src={FooterLogo} alt="Beyond Workz" className="w-6 h-6" />
-              <span className="text-white font-semibold text-lg">
-                Beyond Workz
-              </span>
+            <div className="flex flex-wrap items-center gap-3">
+              <img
+                src={brandLogo}
+                alt=""
+                className="h-10 w-auto max-w-[100px] shrink-0 object-contain object-left brightness-0 invert sm:h-11 sm:max-w-[120px]"
+              />
+              <BrandWordmark variant="footerDark" />
             </div>
 
             <p className="text-sm leading-relaxed max-w-sm">

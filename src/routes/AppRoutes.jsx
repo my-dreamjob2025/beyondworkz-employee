@@ -12,6 +12,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import PageNotFound from "../pages/common/PageNotFound";
 
 const JobSearchPage = lazy(() => import("../pages/public/JobSearchPage"));
+const JobDetailPage = lazy(() => import("../pages/public/JobDetailPage"));
 const DashboardLayout = lazy(() => import("../layouts/DashboardLayout"));
 const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
 const Profile = lazy(() => import("../pages/dashboard/Profile"));
@@ -46,7 +47,12 @@ const HomeRoute = () => {
 
 const AppRoutes = () => {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <AuthInitializer>
         <Routes>
           {/* Home — dashboard if logged in, landing page if not */}
@@ -69,6 +75,14 @@ const AppRoutes = () => {
 
           {/* Public Routes */}
           <Route path="/jobs" element={<Suspense fallback={<PageLoader />}><JobSearchPage /></Suspense>} />
+          <Route
+            path="/jobs/:jobId"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <JobDetailPage />
+              </Suspense>
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 

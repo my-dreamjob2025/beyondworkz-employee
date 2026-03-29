@@ -4,8 +4,6 @@ import { useDispatch } from "react-redux";
 import useAuth from "../../hooks/useAuth";
 import { profileService } from "../../services/profileService";
 import { initAuth } from "../../store/slices/authSlice";
-import logo from "../../assets/logos/beyondworkzlogo.png";
-
 import EmployeeTypeStep from "../../components/profile-setup/EmployeeTypeStep";
 import BasicInfoStep from "../../components/profile-setup/BasicInfoStep";
 import ProfessionalStep from "../../components/profile-setup/ProfessionalStep";
@@ -14,6 +12,8 @@ import BlueCollarExperienceStep from "../../components/profile-setup/BlueCollarE
 import SkillsStep from "../../components/profile-setup/SkillsStep";
 import WorkPrefsStep from "../../components/profile-setup/WorkPrefsStep";
 import EducationStep from "../../components/profile-setup/EducationStep";
+import { BrandWordmark } from "../../components/brand/BrandMark";
+import brandLogo from "../../assets/logos/beyond-workz-logo.png";
 import {
   UserIcon,
   BriefcaseIcon,
@@ -25,6 +25,7 @@ import {
   CheckCircleIcon,
   ArrowRightIcon,
 } from "../../components/profile-setup/StepIcons";
+import { getProfileStepError } from "../../utils/completeProfileValidation";
 
 const WHITE_COLLAR_STEPS = [
   { id: "basic", label: "Basic Info", Icon: UserIcon },
@@ -112,6 +113,7 @@ const CompleteProfile = () => {
   }, []);
 
   const handleChange = (field, value) => {
+    setError("");
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -137,16 +139,16 @@ const CompleteProfile = () => {
       setError("Please click Save in Experience section before continuing.");
       return;
     }
-    if (stepId === "employeeType") {
-      if (!formData.employeeType) {
-        setError("Please select a job type to continue.");
-        return;
-      }
+    const stepErr = getProfileStepError(stepId, { employeeType, formData });
+    if (stepErr) {
+      setError(stepErr);
+      return;
     }
+    setError("");
     const ok = await saveCurrentStep();
     if (!ok) return;
     if (currentStep < steps.length - 1) {
-      setCurrentStep((s) => (stepId === "employeeType" ? 0 : s + 1));
+      setCurrentStep((s) => s + 1);
       window.scrollTo(0, 0);
     } else {
       navigate("/dashboard", { replace: true });
@@ -193,9 +195,13 @@ const CompleteProfile = () => {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col">
       {/* Top bar */}
       <div className="bg-white/95 backdrop-blur-sm border-b border-slate-200/80 px-4 sm:px-6 py-3.5 flex items-center justify-between sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <img src={logo} alt="Beyond Workz" className="w-9 h-9" />
-          <span className="font-semibold text-slate-800 text-lg">Beyond Workz</span>
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+          <img
+            src={brandLogo}
+            alt=""
+            className="h-8 w-auto max-h-9 shrink-0 object-contain object-left sm:h-9"
+          />
+          <BrandWordmark variant="header" />
         </div>
         <button
           onClick={handleSkip}

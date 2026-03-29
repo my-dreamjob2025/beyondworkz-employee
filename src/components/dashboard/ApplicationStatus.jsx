@@ -1,75 +1,60 @@
-const applications = [
-  {
-    role: "Product Manager",
-    company: "FinServe Analytics",
-    status: "Interview Scheduled",
-    date: "Oct 12, 10:00 AM",
-    dot: "bg-green-500",
-    badge: "bg-blue-100 text-blue-600",
-  },
-  {
-    role: "Software Development Engineer II",
-    company: "ZetaCorp",
-    status: "In Review",
-    date: "Applied Oct 5",
-    dot: "bg-orange-500",
-    badge: "bg-orange-100 text-orange-600",
-  },
-  {
-    role: "Frontend Developer",
-    company: "WebWorks India",
-    status: "Applied",
-    date: "Applied Sep 28",
-    dot: "bg-slate-400",
-    badge: "bg-slate-100 text-slate-600",
-  },
-];
+import { Link } from "react-router-dom";
+import { formatAppliedAt, statusBadgeClasses } from "../../utils/applicationUi";
 
-const ApplicationStatus = () => {
+const ApplicationStatus = ({ items = [], loading, error }) => {
+  const preview = items.slice(0, 5);
+
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-6">
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-slate-900">
-          Application Status
-        </h3>
+        <h3 className="text-lg font-semibold text-slate-900">Application status</h3>
 
-        <button className="text-blue-600 text-sm font-medium hover:underline">
+        <Link to="/dashboard/applications" className="text-blue-600 text-sm font-medium hover:underline">
           View all
-        </button>
+        </Link>
       </div>
 
-      {/* Timeline */}
-      <div className="relative">
-        {/* Vertical Line */}
-        <div className="absolute left-2 top-1 bottom-1 w-px bg-slate-200"></div>
+      {loading ? (
+        <p className="text-sm text-slate-500">Loading…</p>
+      ) : error ? (
+        <p className="text-sm text-red-600">{error}</p>
+      ) : preview.length === 0 ? (
+        <p className="text-sm text-slate-500">
+          You have not applied to any jobs yet.{" "}
+          <Link to="/jobs" className="text-blue-600 font-medium hover:underline">
+            Browse openings
+          </Link>
+          .
+        </p>
+      ) : (
+        <div className="relative">
+          <div className="absolute left-2 top-1 bottom-1 w-px bg-slate-200" aria-hidden />
 
-        <div className="space-y-8">
-          {applications.map((app, index) => (
-            <div key={index} className="relative pl-8">
-              {/* Dot */}
-              <span
-                className={`absolute left-[3px] top-2 w-4 h-4 rounded-full ${app.dot}`}
-              ></span>
+          <div className="space-y-8">
+            {preview.map((app) => (
+              <div key={app.id} className="relative pl-8">
+                <span className="absolute left-[3px] top-2 w-4 h-4 rounded-full bg-blue-500" aria-hidden />
 
-              {/* Content */}
-              <div>
-                <h4 className="font-semibold text-slate-900">{app.role}</h4>
+                <div>
+                  <h4 className="font-semibold text-slate-900">{app.job?.title || "Role"}</h4>
 
-                <p className="text-sm text-slate-500 mt-1">{app.company}</p>
+                  <p className="text-sm text-slate-500 mt-1">{app.companyLabel}</p>
 
-                <span
-                  className={`inline-block mt-3 text-xs font-medium px-3 py-1 rounded-md ${app.badge}`}
-                >
-                  {app.status}
-                </span>
+                  <span
+                    className={`inline-block mt-3 text-xs font-medium px-3 py-1 rounded-md bg-slate-50 ${statusBadgeClasses(app.status)}`}
+                  >
+                    {app.statusLabel}
+                  </span>
 
-                <p className="text-sm text-slate-400 mt-2">{app.date}</p>
+                  {app.appliedAt ? (
+                    <p className="text-sm text-slate-400 mt-2">Applied {formatAppliedAt(app.appliedAt)}</p>
+                  ) : null}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -1,8 +1,8 @@
 import SkillsTag from "./SkillsTag";
+import { TrashIcon } from "../icons/ActionIcons";
 import savedIcon from "../../assets/icons/common-icon/saved.svg";
 import location from "../../assets/icons/common-icon/location.svg";
 import cash from "../../assets/icons/common-icon/cash.svg";
-import netflix from "../../assets/images/common/netflix.jpg";
 
 const SavedJobCard = () => {
   return (
@@ -10,11 +10,12 @@ const SavedJobCard = () => {
       {/* TOP SECTION */}
       <div className="flex justify-between items-start">
         <div className="flex gap-4">
-          <img
-            src={netflix}
-            alt="saved icon"
-            className="w-15 h-15 rounded font-[#2563EB]"
-          />
+          <div
+            className="w-14 h-14 shrink-0 rounded-xl bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-600"
+            aria-hidden
+          >
+            FN
+          </div>
 
           <div>
             <h3 className="font-semibold text-slate-900">
@@ -75,7 +76,14 @@ const SavedJobCard = () => {
         <span className="text-xs text-slate-500">Posted 2 days ago</span>
 
         <div className="flex items-center gap-5">
-          <button className="text-sm text-orange-500">Remove</button>
+          <button
+            type="button"
+            className="inline-flex items-center justify-center p-2 rounded-lg text-orange-600 hover:bg-orange-50 transition-colors"
+            aria-label="Remove from saved jobs"
+            title="Remove"
+          >
+            <TrashIcon className="w-5 h-5" />
+          </button>
 
           <button className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium">
             Apply Now

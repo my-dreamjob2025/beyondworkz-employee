@@ -37,7 +37,7 @@ export const initAuth = createAsyncThunk("auth/init", async (_, { rejectWithValu
   }
 });
 
-export const logout = createAsyncThunk("auth/logout", async (_, { rejectWithValue }) => {
+export const logout = createAsyncThunk("auth/logout", async () => {
   try {
     const refreshToken = getRefreshToken();
     await api.post("/auth/logout", {

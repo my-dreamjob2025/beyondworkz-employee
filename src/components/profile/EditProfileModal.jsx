@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { profileService } from "../../services/profileService";
 import useAuth from "../../hooks/useAuth";
@@ -22,9 +22,15 @@ const TABS = [
   { id: "resume", label: "Resume", icon: "📄", whiteCollarOnly: true },
 ];
 
+const TRANSITION_MS = 320;
+
 const EditProfileModal = ({ isOpen, onClose, initialData, onSaved, initialTab }) => {
   const { user: authUser } = useAuth();
   const employeeType = authUser?.employeeType || "whitecollar";
+
+  const [mounted, setMounted] = useState(false);
+  const [animateIn, setAnimateIn] = useState(false);
+  const closeTimerRef = useRef(null);
 
   const [activeTab, setActiveTab] = useState(initialTab || "basic");
   const [saving, setSaving] = useState(false);
@@ -85,6 +91,47 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSaved, initialTab })
     }
   }, [isOpen, initialData]);
 
+  useEffect(() => {
+    if (isOpen) {
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
+      setMounted(true);
+      setAnimateIn(false);
+      const id = requestAnimationFrame(() => {
+        requestAnimationFrame(() => setAnimateIn(true));
+      });
+      return () => cancelAnimationFrame(id);
+    }
+    setAnimateIn(false);
+    closeTimerRef.current = setTimeout(() => {
+      setMounted(false);
+      closeTimerRef.current = null;
+    }, TRANSITION_MS);
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!mounted) return undefined;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mounted]);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen, onClose]);
+
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -104,7 +151,7 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSaved, initialTab })
     }
   };
 
-  if (!isOpen) return null;
+  if (!mounted) return null;
 
   const visibleTabs = TABS.filter((t) => {
     if (t.whiteCollarOnly) return employeeType === "whitecollar";
@@ -151,11 +198,30 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSaved, initialTab })
   };
 
   const modal = (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="absolute inset-0 bg-slate-900/60" onClick={onClose} aria-hidden="true" />
-      <div className="relative bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-4xl max-h-[95vh] sm:max-h-[90vh] flex flex-col">
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="edit-profile-modal-title"
+    >
+      <div
+        className={`absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] transition-opacity duration-300 ease-out motion-reduce:transition-none ${
+          animateIn ? "opacity-100" : "opacity-0"
+        }`}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <div
+        className={`relative bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-4xl max-h-[95vh] sm:max-h-[90vh] flex flex-col transform-gpu transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none motion-reduce:transform-none ${
+          animateIn
+            ? "opacity-100 translate-y-0 sm:scale-100"
+            : "opacity-0 translate-y-8 sm:translate-y-3 sm:scale-[0.97]"
+        }`}
+      >
         <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-slate-200">
-          <h2 className="text-lg sm:text-xl font-semibold text-slate-900">Edit Profile</h2>
+          <h2 id="edit-profile-modal-title" className="text-lg sm:text-xl font-semibold text-slate-900">
+            Edit Profile
+          </h2>
           <button
             type="button"
             onClick={onClose}

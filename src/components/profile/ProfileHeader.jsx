@@ -1,4 +1,5 @@
 import useAuth from "../../hooks/useAuth";
+import { PencilIcon } from "../icons/ActionIcons";
 
 const ProfileHeader = ({ user: userProp, resumeUrl, onEditProfile }) => {
   const { user: authUser } = useAuth();
@@ -59,8 +60,9 @@ const ProfileHeader = ({ user: userProp, resumeUrl, onEditProfile }) => {
           <button
             type="button"
             onClick={onEditProfile}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors inline-flex items-center gap-2"
           >
+            <PencilIcon className="w-4 h-4" />
             Edit Profile
           </button>
           {resumeUrl && (

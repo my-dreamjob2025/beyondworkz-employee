@@ -1,3 +1,5 @@
+import { PencilIcon } from "../icons/ActionIcons";
+
 const AboutSection = ({ bio, onEdit }) => {
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-6">
@@ -6,10 +8,10 @@ const AboutSection = ({ bio, onEdit }) => {
         <button
           type="button"
           onClick={onEdit}
-          className="text-slate-400 hover:text-slate-600 transition-colors"
-          aria-label="Edit"
+          className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition-colors"
+          aria-label="Edit about me"
         >
-          ✏️
+          <PencilIcon className="w-4 h-4" />
         </button>
       </div>
 

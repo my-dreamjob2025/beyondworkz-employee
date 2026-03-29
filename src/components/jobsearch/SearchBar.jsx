@@ -1,58 +1,65 @@
-import { useState } from "react";
 import searchIcon from "../../assets/icons/common-icon/search.svg";
 import locationIcon from "../../assets/icons/common-icon/location.svg";
-import experienceIcon from "../../assets/icons/common-icon/briefcase-gray.svg";
+import { PUBLIC_JOB_CITY_OPTIONS } from "../../constants/publicJobFilters";
 
-const SearchBar = () => {
-  const [jobTitle, setJobTitle] = useState("");
-  const [location, setLocation] = useState("");
-
-  const handleSearch = (e) => {
+const SearchBar = ({
+  query = "",
+  onQueryChange,
+  location = "",
+  onLocationChange,
+  onSubmit,
+  disabled = false,
+}) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    onSubmit?.();
   };
 
   return (
     <div className="bg-slate-100">
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
         <form
-          onSubmit={handleSearch}
-          className="flex items-center bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+          onSubmit={handleSubmit}
+          className="flex flex-col sm:flex-row sm:items-stretch gap-2 sm:gap-0 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
         >
-          {/* Job */}
-          <div className="flex items-center gap-3 px-5 py-4 flex-1">
-            <img src={searchIcon} className="w-5 opacity-60" />
+          <div className="flex items-center gap-3 px-4 sm:px-5 py-3 sm:py-4 flex-1 min-w-0">
+            <img src={searchIcon} alt="" className="w-5 shrink-0 opacity-60" />
             <input
-              type="text"
-              placeholder="Frontend Developer"
-              value={jobTitle}
-              onChange={(e) => setJobTitle(e.target.value)}
-              className="w-full text-sm focus:outline-none"
+              type="search"
+              enterKeyHint="search"
+              placeholder="Job title, keyword, or skill"
+              value={query}
+              onChange={(e) => onQueryChange?.(e.target.value)}
+              disabled={disabled}
+              className="w-full min-w-0 text-sm focus:outline-none disabled:opacity-60"
             />
           </div>
 
-          <div className="h-8 w-px bg-slate-200" />
+          <div className="hidden sm:block w-px bg-slate-200 shrink-0 self-stretch my-3" aria-hidden />
 
-          {/* Experience */}
-          <div className="flex items-center gap-3 px-5 py-4 flex-1">
-            <img src={experienceIcon} className="w-5 opacity-60" />
-            <span className="text-sm text-slate-700">3-5 Years</span>
-          </div>
-
-          <div className="h-8 w-px bg-slate-200" />
-
-          {/* Location */}
-          <div className="flex items-center gap-3 px-5 py-4 flex-1">
-            <img src={locationIcon} className="w-5 opacity-60" />
+          <div className="flex items-center gap-3 px-4 sm:px-5 py-3 sm:py-4 flex-1 min-w-0 border-t sm:border-t-0 border-slate-200">
+            <img src={locationIcon} alt="" className="w-5 shrink-0 opacity-60" />
             <input
               type="text"
-              placeholder="Bengaluru, India"
+              list="job-search-city-suggestions"
+              placeholder="City (optional)"
               value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="w-full text-sm focus:outline-none"
+              onChange={(e) => onLocationChange?.(e.target.value)}
+              disabled={disabled}
+              className="w-full min-w-0 text-sm focus:outline-none disabled:opacity-60"
             />
+            <datalist id="job-search-city-suggestions">
+              {PUBLIC_JOB_CITY_OPTIONS.map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
           </div>
 
-          <button className="bg-blue-600 text-white px-8 py-4 text-sm font-semibold hover:bg-blue-700">
+          <button
+            type="submit"
+            disabled={disabled}
+            className="bg-blue-600 text-white px-6 py-3 sm:py-4 text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none w-full sm:w-auto sm:min-w-[120px] shrink-0"
+          >
             Search
           </button>
         </form>

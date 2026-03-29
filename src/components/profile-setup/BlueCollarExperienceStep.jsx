@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { PencilIcon, TrashIcon } from "../icons/ActionIcons";
 
 const BLUE_COLLAR_SKILL_SUGGESTIONS = [
   "Driving", "Vehicle washing", "Physical work", "Communication", "Cleaning",
@@ -134,12 +135,22 @@ const BlueCollarExperienceStep = ({ data, onChange, onDraftStateChange }) => {
               {exp.current ? " – Present" : exp.relievingDate ? ` – ${new Date(exp.relievingDate).toLocaleDateString()}` : ""}
             </p>
           </div>
-          <div className="flex gap-2 shrink-0">
-            <button type="button" onClick={() => startEdit(idx)} className="text-xs text-blue-600 hover:underline">
-              Edit
+          <div className="flex items-center gap-0.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => startEdit(idx)}
+              className="inline-flex items-center justify-center p-1.5 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors"
+              aria-label="Edit work history"
+            >
+              <PencilIcon className="w-4 h-4" />
             </button>
-            <button type="button" onClick={() => remove(idx)} className="text-xs text-red-500 hover:underline">
-              Remove
+            <button
+              type="button"
+              onClick={() => remove(idx)}
+              className="inline-flex items-center justify-center p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+              aria-label="Remove work history"
+            >
+              <TrashIcon className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -152,7 +163,9 @@ const BlueCollarExperienceStep = ({ data, onChange, onDraftStateChange }) => {
           </p>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Job Title *</label>
+              <label className="block text-xs font-medium text-slate-600 mb-1">
+                Job Title <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 value={form.jobTitle}
@@ -162,7 +175,9 @@ const BlueCollarExperienceStep = ({ data, onChange, onDraftStateChange }) => {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Company / Employer *</label>
+              <label className="block text-xs font-medium text-slate-600 mb-1">
+                Company / Employer <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 value={form.company}
@@ -174,7 +189,9 @@ const BlueCollarExperienceStep = ({ data, onChange, onDraftStateChange }) => {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Date of Joining *</label>
+              <label className="block text-xs font-medium text-slate-600 mb-1">
+                Date of Joining <span className="text-red-500">*</span>
+              </label>
               <input
                 type="date"
                 value={form.dateOfJoining}

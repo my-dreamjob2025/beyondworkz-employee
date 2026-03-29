@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { PencilIcon, TrashIcon } from "../icons/ActionIcons";
 
 const LEVELS = ["10th", "12th", "Diploma", "Undergraduate", "Postgraduate", "Doctorate", "Other"];
 
@@ -99,20 +100,22 @@ const EducationStep = ({ data, onChange }) => {
               </p>
             )}
           </div>
-          <div className="flex gap-2 shrink-0">
+          <div className="flex items-center gap-0.5 shrink-0">
             <button
               type="button"
               onClick={() => startEdit(idx)}
-              className="text-xs text-blue-600 hover:underline"
+              className="inline-flex items-center justify-center p-1.5 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors"
+              aria-label="Edit education"
             >
-              Edit
+              <PencilIcon className="w-4 h-4" />
             </button>
             <button
               type="button"
               onClick={() => remove(idx)}
-              className="text-xs text-red-500 hover:underline"
+              className="inline-flex items-center justify-center p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+              aria-label="Remove education"
             >
-              Remove
+              <TrashIcon className="w-4 h-4" />
             </button>
           </div>
         </div>

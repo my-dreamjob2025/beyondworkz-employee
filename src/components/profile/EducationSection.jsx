@@ -1,3 +1,5 @@
+import { PencilIcon } from "../icons/ActionIcons";
+
 const toYear = (d) => {
   if (!d) return "";
   if (typeof d === "string") return /^\d{4}/.test(d) ? d.slice(0, 4) : "";
@@ -40,22 +42,10 @@ const EducationSection = ({ education = [], onEdit }) => {
                   <button
                     type="button"
                     onClick={onEdit}
-                    className="text-slate-400 hover:text-slate-600 p-0.5 shrink-0"
-                    aria-label="Edit"
+                    className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 shrink-0 transition-colors"
+                    aria-label="Edit education"
                   >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                      />
-                    </svg>
+                    <PencilIcon className="w-4 h-4" />
                   </button>
                 </div>
                 <p className="text-sm text-slate-500 mt-0.5">

@@ -3,6 +3,8 @@ import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { authService } from "../../services/authService";
 import useAuth from "../../hooks/useAuth";
 import AuthLeftPanel from "../../components/auth/AuthLeftPanel";
+import { BrandWordmark } from "../../components/brand/BrandMark";
+import brandLogo from "../../assets/logos/beyond-workz-logo.png";
 import GoogleIcon from "../../assets/icons/common-icon/google-icon.svg";
 
 const Login = () => {
@@ -150,13 +152,17 @@ const Login = () => {
       {/* Right Side - Login Form */}
       <div className="w-full lg:w-1/2 flex-shrink-0 flex items-center justify-center p-4 sm:p-8 bg-white">
         <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-              Log In To
-            </p>
-            <h1 className="text-3xl font-bold text-slate-900">
-              Beyond Workz Account
-            </h1>
+          <div className="mb-8 text-center">
+            <div className="mb-4 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+              <img
+                src={brandLogo}
+                alt=""
+                className="h-16 w-auto max-w-[140px] object-contain sm:h-20 sm:max-w-[160px]"
+              />
+              <BrandWordmark variant="auth" className="text-center sm:text-left" />
+            </div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Log in to</p>
+            <h1 className="text-3xl font-bold text-slate-900">Your account</h1>
           </div>
 
           {/* Email Step */}

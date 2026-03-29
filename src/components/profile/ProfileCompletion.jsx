@@ -1,6 +1,4 @@
 import { Link } from "react-router-dom";
-import checkIcon from "../../assets/icons/common-icon/right-icon.svg";
-import plusIcon from "../../assets/icons/common-icon/plus-icon.svg";
 
 const ProfileCompletion = ({ profileCompletion = 0 }) => {
   const pct = Math.min(100, Math.max(0, Number(profileCompletion) || 0));

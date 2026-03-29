@@ -10,6 +10,7 @@ import interviewIcon from "../../assets/icons/layout/calender.svg";
 import messageIcon from "../../assets/icons/layout/messages.svg";
 import alertIcon from "../../assets/icons/layout/notification.svg";
 import settingsIcon from "../../assets/icons/layout/setting.svg";
+import searchNavIcon from "../../assets/icons/common-icon/search.svg";
 
 const Sidebar = ({ isOpen = false, onClose }) => {
   const navigate = useNavigate();
@@ -24,7 +25,8 @@ const Sidebar = ({ isOpen = false, onClose }) => {
   };
 
   const navItems = [
-    { label: "Dashboard", icon: dashboardIcon, path: "/" },
+    { label: "Dashboard", icon: dashboardIcon, path: "/dashboard" },
+    { label: "Find Jobs", icon: searchNavIcon, path: "/jobs" },
     { label: "My Profile", icon: profileIcon, path: "/dashboard/profile" },
     {
       label: "Applications",
@@ -41,7 +43,12 @@ const Sidebar = ({ isOpen = false, onClose }) => {
     { label: "Settings", icon: settingsIcon, path: "/dashboard/setting" },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => {
+    if (path === "/jobs") {
+      return location.pathname === "/jobs" || location.pathname.startsWith("/jobs/");
+    }
+    return location.pathname === path;
+  };
 
   const handleNav = (path) => {
     navigate(path);

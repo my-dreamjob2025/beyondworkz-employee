@@ -1,30 +1,32 @@
-const Pagination = () => {
-  const pages = [1, 2, 3, "...", 10];
+const Pagination = ({ page = 1, totalPages = 1, onPageChange, disabled }) => {
+  if (totalPages <= 1) return null;
+
+  const go = (p) => {
+    if (disabled || p < 1 || p > totalPages) return;
+    onPageChange?.(p);
+  };
 
   return (
-    <div className="flex justify-center items-center gap-2 mt-8">
-      {/* Previous */}
-      <button className="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">
+    <div className="flex flex-wrap justify-center items-center gap-2 mt-8">
+      <button
+        type="button"
+        disabled={disabled || page <= 1}
+        onClick={() => go(page - 1)}
+        className="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
         ‹ Previous
       </button>
 
-      {/* Page Numbers */}
-      {pages.map((page, index) => (
-        <button
-          key={index}
-          className={`w-9 h-9 rounded-lg text-sm flex items-center justify-center
-          ${
-            page === 1
-              ? "bg-blue-600 text-white"
-              : "border border-slate-200 text-slate-700 hover:bg-slate-50"
-          }`}
-        >
-          {page}
-        </button>
-      ))}
+      <span className="text-sm text-slate-600 px-2">
+        Page {page} of {totalPages}
+      </span>
 
-      {/* Next */}
-      <button className="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">
+      <button
+        type="button"
+        disabled={disabled || page >= totalPages}
+        onClick={() => go(page + 1)}
+        className="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
         Next ›
       </button>
     </div>

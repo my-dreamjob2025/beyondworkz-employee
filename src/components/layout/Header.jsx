@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
-import logo from "../../assets/logos/beyondworkzlogo.png";
+import { BrandLogoWithWordmarkButton } from "../brand/BrandMark";
 import notification from "../../assets/icons/layout/Notification.svg";
 import downarrow from "../../assets/icons/layout/down-arrow.svg";
 
@@ -10,19 +10,14 @@ import NotificationDropdown from "./NotificationDropdown";
 
 const Header = ({ onMenuClick }) => {
   const navigate = useNavigate();
-  const { user: currentUser, logout } = useAuth();
+  const { user: currentUser } = useAuth();
 
   const [showNotifications, setShowNotifications] = useState(false);
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
       <div className="flex items-center justify-between gap-2 px-4 sm:px-6 py-3">
-        {/* LEFT: Hamburger + Logo */}
+        {/* LEFT: Hamburger + brand */}
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <button
             type="button"
@@ -34,12 +29,7 @@ const Header = ({ onMenuClick }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <button type="button" onClick={() => navigate("/dashboard")} className="flex items-center gap-2 min-w-0">
-            <img src={logo} alt="Beyond Workz" className="h-8 sm:h-9 w-auto max-w-[120px] sm:max-w-[140px] object-contain flex-shrink-0" />
-            <span className="text-base sm:text-lg font-semibold text-blue-600 hidden sm:inline truncate">
-              Beyond Workz
-            </span>
-          </button>
+          <BrandLogoWithWordmarkButton onClick={() => navigate("/dashboard")} />
         </div>
 
         {/* SEARCH - hidden on small screens */}
@@ -97,7 +87,9 @@ const Header = ({ onMenuClick }) => {
               <p className="text-sm font-medium text-slate-800 truncate">
                 {currentUser?.firstName} {currentUser?.lastName}
               </p>
-              <p className="text-xs text-slate-500">Frontend Developer</p>
+              <p className="text-xs text-slate-500 truncate">
+                {currentUser?.jobTitle?.trim() || "Job seeker"}
+              </p>
             </div>
             <img src={downarrow} alt="" className="w-3 h-3 hidden sm:block flex-shrink-0" />
           </button>

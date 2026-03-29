@@ -1,9 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import capgemini from "../../assets/logos/capgemini.svg";
-import genpact from "../../assets/logos/genpact.svg";
-import icici from "../../assets/logos/icici.svg";
-import kotak from "../../assets/logos/kotak.svg";
-import techMahindra from "../../assets/logos/techmahindra.svg";
 import heroImage from "../../assets/images/landing-page/hero-image.png";
 import searchIcon from "../../assets/icons/common-icon/search.svg";
 import locationIcon from "../../assets/icons/common-icon/location.svg";
@@ -14,8 +9,6 @@ const trendingTags = [
   "Forklift Operator",
   "Marketing",
 ];
-
-const logos = [capgemini, genpact, icici, kotak, techMahindra];
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -100,24 +93,6 @@ const Hero = () => {
               {tag}
             </button>
           ))}
-        </div>
-
-        {/* Trusted Logos */}
-        <div className="mt-8">
-          <p className="tracking-widest uppercase text-[#838383] mb-8">
-            Trusted by top enterprises
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-10">
-            {logos.map((logo, index) => (
-              <img
-                key={index}
-                src={logo}
-                alt="Company logo"
-                className="h-12 md:h-14 w-auto object-contain opacity-80 hover:opacity-100 transition"
-              />
-            ))}
-          </div>
         </div>
 
         {/* Bottom Illustration */}
