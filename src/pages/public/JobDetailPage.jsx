@@ -5,6 +5,7 @@ import Footer from "../../components/common/Footer";
 import AuthenticatedShell from "../../components/layout/AuthenticatedShell";
 import useAuth from "../../hooks/useAuth";
 import { applyToPublishedJob, fetchPublishedJob } from "../../services/jobsService";
+import JobApplyModal from "../../components/job/JobApplyModal";
 import { formatPostedLabel, formatSalaryRange } from "../../utils/jobDisplay";
 import {
   benefitLabelsFromJob,
@@ -47,7 +48,7 @@ const JobDetailPage = () => {
   const [job, setJob] = useState(null);
   const [jobLoading, setJobLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [applyLoading, setApplyLoading] = useState(false);
+  const [applyModalOpen, setApplyModalOpen] = useState(false);
   const [applyFeedback, setApplyFeedback] = useState(null);
 
   useEffect(() => {
@@ -92,40 +93,22 @@ const JobDetailPage = () => {
     setApplyFeedback(null);
   }, [jobId]);
 
-  const handleApply = async () => {
+  const handleApply = () => {
     if (!jobId) return;
     if (!user) {
       navigate(`/login?from=${encodeURIComponent(routeLocation.pathname || `/jobs/${jobId}`)}`);
       return;
     }
-    setApplyLoading(true);
     setApplyFeedback(null);
-    try {
-      const res = await applyToPublishedJob(jobId);
-      if (res.success) {
-        setApplyFeedback({ type: "success", text: res.message || "Application submitted." });
-      } else {
-        setApplyFeedback({ type: "error", text: res.message || "Could not apply." });
-      }
-    } catch (e) {
-      const status = e.response?.status;
-      const msg = e.response?.data?.message;
-      if (status === 409) {
-        setApplyFeedback({ type: "info", text: msg || "You have already applied for this job." });
-      } else if (status === 403) {
-        setApplyFeedback({
-          type: "error",
-          text: msg || "Only job seeker accounts can apply.",
-        });
-      } else {
-        setApplyFeedback({
-          type: "error",
-          text: msg || e.message || "Could not submit application.",
-        });
-      }
-    } finally {
-      setApplyLoading(false);
+    setApplyModalOpen(true);
+  };
+
+  const submitApplication = async (payload) => {
+    const res = await applyToPublishedJob(jobId, payload);
+    if (!res?.success) {
+      throw new Error(res?.message || "Could not apply.");
     }
+    setApplyFeedback({ type: "success", text: res.message || "Application submitted." });
   };
 
   const company =
@@ -355,16 +338,25 @@ const JobDetailPage = () => {
                     <button
                       type="button"
                       onClick={handleApply}
-                      disabled={applyLoading || jobLoading || !!error}
+                      disabled={jobLoading || !!error}
                       className="inline-flex justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 min-h-[44px] items-center disabled:opacity-60 disabled:pointer-events-none"
                     >
-                      {applyLoading ? "Submitting…" : user ? "Apply now" : "Sign in to apply"}
+                      {user ? "Apply now" : "Sign in to apply"}
                     </button>
                   </div>
                 </div>
               </div>
             </article>
           ) : null}
+
+      {job && user ? (
+        <JobApplyModal
+          open={applyModalOpen}
+          onClose={() => setApplyModalOpen(false)}
+          job={job}
+          onSubmit={submitApplication}
+        />
+      ) : null}
     </div>
   );
 

@@ -96,9 +96,9 @@ button {
   cursor: pointer;
 }
 
-/* Make all employee panel buttons pill-shaped */
-button,
-button[class*="rounded"] {
+/* Pill-shaped buttons — do not target full-viewport modal scrims: `border-radius` + `inset-0`
+   draws a huge ellipse instead of a flat dimmed overlay. */
+button:not([class*="inset-0"]) {
   border-radius: 555px;
 }
 

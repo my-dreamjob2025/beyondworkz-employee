@@ -24,7 +24,8 @@ export function bonusLabelsFromJob(bonuses) {
   return BONUS_LABELS.filter(([key]) => bonuses[key]).map(([, label]) => label);
 }
 
-const SCREENING_FLAG_LABELS = [
+/** Keys match job API `screening` booleans — used for highlights and apply form checkboxes */
+export const SCREENING_FLAG_ENTRIES = [
   ["experience", "We will review your experience against the role"],
   ["locationComfort", "Comfort working at this location matters"],
   ["immediateJoin", "Immediate availability is a plus"],
@@ -37,7 +38,7 @@ const SCREENING_FLAG_LABELS = [
 export function screeningHighlights(screening) {
   if (!screening || typeof screening !== "object") return { flags: [], customQuestions: [], prefs: [] };
 
-  const flags = SCREENING_FLAG_LABELS.filter(([key]) => screening[key]).map(([, label]) => label);
+  const flags = SCREENING_FLAG_ENTRIES.filter(([key]) => screening[key]).map(([, label]) => label);
 
   const prefs = [];
   const pe = String(screening.preferredExperience || "").trim();

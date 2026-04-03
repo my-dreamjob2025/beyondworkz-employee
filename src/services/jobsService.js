@@ -28,7 +28,7 @@ export async function fetchPublishedJob(jobId) {
 }
 
 /** Authenticated job seeker — POST /jobs/:jobId/apply */
-export async function applyToPublishedJob(jobId) {
-  const { data } = await api.post(`/jobs/${encodeURIComponent(jobId)}/apply`);
+export async function applyToPublishedJob(jobId, payload = {}) {
+  const { data } = await api.post(`/jobs/${encodeURIComponent(jobId)}/apply`, payload);
   return data;
 }

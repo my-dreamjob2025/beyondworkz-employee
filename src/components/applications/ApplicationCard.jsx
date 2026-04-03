@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProgressTracker from "./ProgressTracker";
+import ApplicationDetailModal from "./ApplicationDetailModal";
 import { formatAppliedAt, jobLocationLine, progressStepForStatus, statusBadgeClasses } from "../../utils/applicationUi";
 
 function initials(label) {
@@ -12,6 +14,7 @@ function initials(label) {
 
 const ApplicationCard = ({ application }) => {
   const navigate = useNavigate();
+  const [detailOpen, setDetailOpen] = useState(false);
   if (!application) return null;
 
   const { status, statusLabel, job, companyLabel, appliedAt } = application;
@@ -64,6 +67,13 @@ const ApplicationCard = ({ application }) => {
         <span>{appliedText}</span>
 
         <div className="flex flex-wrap gap-4">
+          <button
+            type="button"
+            onClick={() => setDetailOpen(true)}
+            className="text-blue-600 font-medium hover:underline"
+          >
+            Application details
+          </button>
           {job?.id ? (
             <button
               type="button"
@@ -75,6 +85,12 @@ const ApplicationCard = ({ application }) => {
           ) : null}
         </div>
       </div>
+
+      <ApplicationDetailModal
+        applicationId={application.id}
+        open={detailOpen}
+        onClose={() => setDetailOpen(false)}
+      />
     </div>
   );
 };

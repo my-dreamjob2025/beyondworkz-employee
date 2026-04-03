@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { useNotifications } from "../../hooks/useNotifications";
 
 import { BrandLogoWithWordmarkButton } from "../brand/BrandMark";
 import notification from "../../assets/icons/layout/Notification.svg";
@@ -10,9 +11,23 @@ import NotificationDropdown from "./NotificationDropdown";
 
 const Header = ({ onMenuClick }) => {
   const navigate = useNavigate();
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, loading: authLoading } = useAuth();
+  const notificationsRef = useRef(null);
+
+  const notificationsEnabled = Boolean(currentUser) && !authLoading;
+  const { notifications, unreadCount, markRead, markAllRead } = useNotifications(notificationsEnabled);
 
   const [showNotifications, setShowNotifications] = useState(false);
+
+  useEffect(() => {
+    function handleDocClick(e) {
+      if (notificationsRef.current && !notificationsRef.current.contains(e.target)) {
+        setShowNotifications(false);
+      }
+    }
+    document.addEventListener("mousedown", handleDocClick);
+    return () => document.removeEventListener("mousedown", handleDocClick);
+  }, []);
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
@@ -58,17 +73,28 @@ const Header = ({ onMenuClick }) => {
         {/* RIGHT */}
         <div className="flex items-center gap-2 sm:gap-4 lg:gap-5 flex-shrink-0">
           {/* Notification */}
-          <div className="relative">
+          <div className="relative" ref={notificationsRef}>
             <button
+              type="button"
               onClick={() => setShowNotifications(!showNotifications)}
               className="relative"
+              aria-expanded={showNotifications}
+              aria-label="Notifications"
             >
-              <img src={notification} alt="notification" className="w-5 h-5" />
+              <img src={notification} alt="" className="w-5 h-5" />
 
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              {unreadCount > 0 ? (
+                <span className="absolute -top-1 -right-1 min-w-[8px] h-2 px-0.5 bg-red-500 rounded-full" />
+              ) : null}
             </button>
 
-            {showNotifications && <NotificationDropdown />}
+            {showNotifications ? (
+              <NotificationDropdown
+                notifications={notifications}
+                onMarkAllRead={markAllRead}
+                onItemClick={(id) => markRead(id)}
+              />
+            ) : null}
           </div>
 
           {/* Divider - hidden on small */}

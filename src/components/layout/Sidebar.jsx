@@ -40,7 +40,7 @@ const Sidebar = ({ isOpen = false, onClose }) => {
 
   const preferenceItems = [
     { label: "Job Alerts", icon: alertIcon, path: "/dashboard/job-alerts" },
-    { label: "Settings", icon: settingsIcon, path: "/dashboard/setting" },
+    { label: "Settings", icon: settingsIcon, path: "/dashboard/settings" },
   ];
 
   const isActive = (path) => {

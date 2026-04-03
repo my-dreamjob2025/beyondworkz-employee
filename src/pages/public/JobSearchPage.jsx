@@ -10,7 +10,6 @@ import FiltersSidebar from "../../components/jobsearch/FiltersSidebar";
 import ResultsHeader from "../../components/jobsearch/ResultsHeader";
 import JobCard from "../../components/jobsearch/JobCard";
 import Pagination from "../../components/jobsearch/Pagination";
-import EmployerCard from "../../components/jobsearch/EmployerCard";
 import FAQSection from "../../components/jobsearch/FAQSection";
 import TestimonialsStrip from "../../components/jobsearch/TestimonialsStrip";
 
@@ -130,7 +129,7 @@ const JobSearchPage = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)_minmax(0,300px)] gap-6 lg:gap-8 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)] gap-6 lg:gap-8 items-start">
               <div className={`${showFilters ? "block" : "hidden"} lg:block`}>
                 <FiltersSidebar
                   selectedCity={appliedCity}
@@ -190,8 +189,6 @@ const JobSearchPage = () => {
                   />
                 </div>
               </div>
-
-              <EmployerCard />
             </div>
         </div>
       </section>

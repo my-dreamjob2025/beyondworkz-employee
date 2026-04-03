@@ -9,7 +9,6 @@ import Register from "../pages/auth/Register";
 import AuthCallback from "../pages/auth/AuthCallback";
 
 import ProtectedRoute from "./ProtectedRoute";
-import PageNotFound from "../pages/common/PageNotFound";
 
 const JobSearchPage = lazy(() => import("../pages/public/JobSearchPage"));
 const JobDetailPage = lazy(() => import("../pages/public/JobDetailPage"));
@@ -105,11 +104,11 @@ const AppRoutes = () => {
             <Route path="interviews" element={<Interviews />} />
             <Route path="messages" element={<Messages />} />
             <Route path="settings" element={<Settings />} />
-            <Route path="*" element={<PageNotFound />} />
+            <Route path="setting" element={<Navigate to="/dashboard/settings" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
 
-          {/* Global 404 */}
-          <Route path="*" element={<PageNotFound />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthInitializer>
     </Router>
