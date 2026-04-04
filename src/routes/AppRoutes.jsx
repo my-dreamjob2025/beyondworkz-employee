@@ -21,6 +21,7 @@ const JobAlerts = lazy(() => import("../pages/dashboard/JobAlerts"));
 const Interviews = lazy(() => import("../pages/dashboard/Interviews"));
 const Messages = lazy(() => import("../pages/dashboard/Messages"));
 const Settings = lazy(() => import("../pages/dashboard/Setting"));
+const HelpSupport = lazy(() => import("../pages/dashboard/HelpSupport"));
 const CompleteProfile = lazy(() => import("../pages/profile/CompleteProfile"));
 
 const PageLoader = () => (
@@ -104,6 +105,7 @@ const AppRoutes = () => {
             <Route path="interviews" element={<Interviews />} />
             <Route path="messages" element={<Messages />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="support" element={<HelpSupport />} />
             <Route path="setting" element={<Navigate to="/dashboard/settings" replace />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
