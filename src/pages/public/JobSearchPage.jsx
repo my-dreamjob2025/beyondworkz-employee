@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
 import AuthenticatedShell from "../../components/layout/AuthenticatedShell";
@@ -19,6 +19,7 @@ import { toJobCardModel } from "../../utils/jobDisplay";
 const PAGE_SIZE = 20;
 
 const JobSearchPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const [showFilters, setShowFilters] = useState(false);
   const [jobs, setJobs] = useState([]);
@@ -28,27 +29,52 @@ const JobSearchPage = () => {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
-  const [draftQ, setDraftQ] = useState("");
-  const [draftCity, setDraftCity] = useState("");
-  const [appliedQ, setAppliedQ] = useState("");
-  const [appliedCity, setAppliedCity] = useState("");
-  const [appliedJobType, setAppliedJobType] = useState("");
+  const [draftQ, setDraftQ] = useState(() => searchParams.get("q") || "");
+  const [draftCity, setDraftCity] = useState(() => searchParams.get("city") || "");
+  const [appliedQ, setAppliedQ] = useState(() => searchParams.get("q") || "");
+  const [appliedCity, setAppliedCity] = useState(() => searchParams.get("city") || "");
+  const [appliedJobType, setAppliedJobType] = useState(() => searchParams.get("type") || "");
+
+  const syncListUrl = (q, city, jobType) => {
+    const next = new URLSearchParams();
+    if (q) next.set("q", q);
+    if (city) next.set("city", city);
+    if (jobType) next.set("type", jobType);
+    setSearchParams(next, { replace: true });
+  };
+
+  useEffect(() => {
+    const q = searchParams.get("q") || "";
+    const city = searchParams.get("city") || "";
+    const type = searchParams.get("type") || "";
+    setDraftQ(q);
+    setDraftCity(city);
+    setAppliedQ(q);
+    setAppliedCity(city);
+    setAppliedJobType(type);
+    setPage(1);
+  }, [searchParams]);
 
   const applySearch = () => {
-    setAppliedQ(draftQ.trim());
-    setAppliedCity(draftCity.trim());
+    const q = draftQ.trim();
+    const c = draftCity.trim();
+    setAppliedQ(q);
+    setAppliedCity(c);
     setPage(1);
+    syncListUrl(q, c, appliedJobType);
   };
 
   const handleCityFilter = (value) => {
     setAppliedCity(value);
     setDraftCity(value);
     setPage(1);
+    syncListUrl(appliedQ, value, appliedJobType);
   };
 
   const handleJobTypeFilter = (value) => {
     setAppliedJobType(value);
     setPage(1);
+    syncListUrl(appliedQ, appliedCity, value);
   };
 
   const clearFilters = () => {
@@ -58,6 +84,7 @@ const JobSearchPage = () => {
     setAppliedCity("");
     setAppliedJobType("");
     setPage(1);
+    setSearchParams({}, { replace: true });
   };
 
   useEffect(() => {

@@ -4,6 +4,15 @@ import useAuth from "../hooks/useAuth";
 import AuthInitializer from "../components/AuthInitializer";
 
 import LandingPage from "../pages/public/LandingPage";
+import AboutPage from "../pages/public/AboutPage";
+import MissionPage from "../pages/public/MissionPage";
+import CareersPage from "../pages/public/CareersPage";
+import PrivacyPage from "../pages/public/PrivacyPage";
+import TermsPage from "../pages/public/TermsPage";
+import BrowseCompaniesPage from "../pages/public/BrowseCompaniesPage";
+import SalaryCalculatorPage from "../pages/public/SalaryCalculatorPage";
+import ResumeBuilderPage from "../pages/public/ResumeBuilderPage";
+import CareerResourcesPage from "../pages/public/CareerResourcesPage";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import AuthCallback from "../pages/auth/AuthCallback";
@@ -83,6 +92,17 @@ const AppRoutes = () => {
               </Suspense>
             }
           />
+
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/mission" element={<MissionPage />} />
+          <Route path="/careers" element={<CareersPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/companies" element={<BrowseCompaniesPage />} />
+          <Route path="/salary-calculator" element={<SalaryCalculatorPage />} />
+          <Route path="/resume-builder" element={<ResumeBuilderPage />} />
+          <Route path="/career-resources" element={<CareerResourcesPage />} />
+
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 

@@ -2,21 +2,19 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import arrowIcon from "../../assets/icons/landing-page/arrow.svg";
 import { BrandLogoWithWordmarkLink } from "../brand/BrandMark";
-
-const RECRUITERS_URL = "http://employer.beyondworkz.com/";
+import { employerUrls } from "../../constants/appUrls";
 
 const NAV_LINKS = [
   { label: "Find Jobs", href: "/jobs" },
-  { label: "Career Resources", href: "#" },
-  { label: "For Employers", href: RECRUITERS_URL },
+  { label: "Career Resources", href: "/career-resources" },
+  { label: "For Employers", href: employerUrls.dashboard },
 ];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleRecruitersClick = () => {
-    // External redirect (same tab) for recruiters/employers.
-    window.location.href = RECRUITERS_URL;
+    window.location.href = employerUrls.dashboard;
   };
 
   return (
