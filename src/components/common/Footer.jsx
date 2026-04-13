@@ -2,8 +2,7 @@ import { Link } from "react-router-dom";
 import brandLogo from "../../assets/logos/beyond-workz-logo.png";
 import { BrandWordmark } from "../brand/BrandMark";
 import LinkedinIcon from "../../assets/icons/common-icon/linkedin.svg";
-import TwitterIcon from "../../assets/icons/common-icon/twitter.svg";
-import FacebookIcon from "../../assets/icons/common-icon/facebook.svg";
+import InstagramIcon from "../../assets/icons/common-icon/instagram.svg";
 import { employerUrls } from "../../constants/appUrls";
 
 const seekerLinks = [
@@ -98,14 +97,21 @@ const Footer = () => {
           <p>© {new Date().getFullYear()} Beyond Workz. All rights reserved.</p>
 
           <div className="flex items-center gap-5">
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <a
+              href="https://www.linkedin.com/company/beyondworkz/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Beyond Workz on LinkedIn"
+            >
               <img src={LinkedinIcon} alt="" className="w-5 h-5 cursor-pointer hover:opacity-80" />
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-              <img src={TwitterIcon} alt="" className="w-5 h-5 cursor-pointer hover:opacity-80" />
-            </a>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-              <img src={FacebookIcon} alt="" className="w-5 h-5 cursor-pointer hover:opacity-80" />
+            <a
+              href="https://www.instagram.com/beyondworkz/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Beyond Workz on Instagram"
+            >
+              <img src={InstagramIcon} alt="" className="w-5 h-5 cursor-pointer hover:opacity-80" />
             </a>
           </div>
         </div>
